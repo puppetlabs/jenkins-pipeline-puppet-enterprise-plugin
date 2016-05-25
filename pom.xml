@@ -12,7 +12,7 @@
     <version>0.1.0</version>
     <packaging>hpi</packaging>
     <name>Pipeline: Puppet Enterprise</name>
-    <url>https://wiki.jenkins-ci.org/display/JENKINS/Pipeline+Basic+Steps+Plugin</url>
+    <url>https://wiki.jenkins-ci.org/display/JENKINS/Pipeline+Puppet+Enterprise+Plugin</url>
     <licenses>
         <license>
             <name>MIT License</name>
@@ -20,9 +20,9 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:git:git://github.com/puppetlabs/${project.artifactId}-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:puppetlabs/${project.artifactId}-plugin.git</developerConnection>
-        <url>https://github.com/puppetlabs/${project.artifactId}-plugin</url>
+        <connection>scm:git:git://github.com/puppetlabs/jenkins-workflow-puppet-enterprise-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:puppetlabs/jenkins-workflow-puppet-enterprise-plugin.git</developerConnection>
+        <url>https://github.com/puppetlabs/jenkins-workflow-puppet-enterprise-plugin</url>
       <tag>HEAD</tag>
     </scm>
     <repositories>
