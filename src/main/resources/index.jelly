@@ -1,0 +1,7 @@
+<?jelly escape-by-default='true'?>
+<!--
+  This view is used to render the installed plugins page.
+-->
+<div>
+  Manage the location and communication options for Pipeline jobs to manage Puppet Enterprise.
+</div>

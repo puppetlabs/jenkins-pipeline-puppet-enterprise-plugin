@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
+    <f:entry field="environment" title="Environment">
+        <f:textbox  default="production"/>
+    </f:entry>
+    <f:entry field="target" title="Target">
+        <f:textbox  id="config.target" name="config.concurrency" placeholder="all"/>
+    </f:entry>
+    <f:entry field="concurrency" title="Concurrency">
+        <f:textbox  id="config.concurrency" name="config.concurrency" placeholder="unlimited"/>
+    </f:entry>
+    <f:entry field="noop" title="Noop">
+        <f:checkbox id="config.noop" name="config.concurrency" />
+    </f:entry>
+    <st:include page="config-generic.jelly" class="org.jenkinsci.plugins.workflow.steps.PuppetEnterpriseStep"/>
+</j:jelly>

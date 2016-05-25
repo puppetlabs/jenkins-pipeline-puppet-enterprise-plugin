@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
+    <f:entry field="environment" title="Environment">
+        <f:textbox default="production"/>
+    </f:entry>
+    <st:include page="config-generic.jelly" class="org.jenkinsci.plugins.workflow.steps.PuppetEnterpriseStep"/>
+</j:jelly>

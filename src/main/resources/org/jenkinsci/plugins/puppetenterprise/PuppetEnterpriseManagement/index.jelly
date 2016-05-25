@@ -1,0 +1,41 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+  xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <l:layout permission="${app.ADMINISTER}" norefresh="true">
+
+    <st:include page="sidepanel.jelly" />
+
+    <l:main-panel>
+      <h1>
+        <img src="${it.getIconUrl(rootURL)}" alt="" height="40px"/>
+        <j:out value=" " />
+        ${%Puppet Enterprise}
+      </h1>
+
+      <j:out value="These are configurations provide default values for the Puppet Enterprise methods available for use in a Jenkinsfile to control Puppet Enterprise." />
+
+      <div class="excerpt">
+      <f:form method="post" name="config" action="saveConfig">
+        <f:section title="${%Global Configurations}" name="config">
+          <input type="hidden" name="stapler-class" value="${config.class.name}" />
+          <f:entry title="${%Puppet Master Address}">
+            <f:textbox id="config.puppetMasterUrl" name="config.puppetMasterUrl" value="${it.getPuppetMasterUrl()}" default="https://puppet.example.com" />
+          </f:entry>
+          <f:block>
+            <f:submit value="${%Submit}" />
+          </f:block>
+        </f:section>
+      </f:form>
+
+      </div>
+    <script>
+    function cfp_confirmDelete(name) {
+      if (confirm("Sure you want to delete ["+name+"]?")) {
+        return true;
+      }else{
+        return false;
+      }
+    }
+    </script>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>
