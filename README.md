@@ -126,7 +126,7 @@ code management in Puppet Enterprise, go here: [https://docs.puppet.com/pe/lates
   puppet.job 'production', concurrency: 10, noop: true, credentialsId: 'pe-access-token'
 ```
 
-### puppetJob
+### puppetHiera
 
 **groovy script invocation**: puppetHiera()
 
@@ -141,4 +141,6 @@ code management in Puppet Enterprise, go here: [https://docs.puppet.com/pe/lates
 ```
   puppetHiera path: 'staging', key: 'app-build-version', value: 'master'
   puppetHiera path: 'production', key: 'app-build-version', value: '8f3ea2'
+  puppetHiera path: 'dc1-us-example', key: 'list-example', value: ['a,'b','c']
+  puppetHiera path: 'host.example.com', key: 'hash-example', value: ['a':1, 'bool':false, 'c': 'string']
 ```
