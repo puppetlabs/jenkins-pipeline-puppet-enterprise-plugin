@@ -21,6 +21,28 @@ node {
 }
 ```
 
+### Experimental Hiera Feature
+
+This plugin also provides an experimental feature that provides a Hiera
+key/value store for Hiera. Key/value pairs are set using the provided
+`puppetHiera` method.  Pairs are assigned to specific Puppet environments.  The
+accomponying Hiera backend performs a key lookup for the requesting node's
+Puppet environment.
+
+To set values:
+
+```
+node {
+  puppetHiera environment: 'production', key: 'keyname', value: 'keyvalue'
+}
+```
+
+This is experimental because the values are stored in an XML file on the
+Jenkins server.  There is no audit history of the data and therefor no way to
+replicate past values. Also, if the file is lost due to, for example, disk
+failure, the current values are lost.  So only use this if you trust your
+Jenkins server backups and don't care about audit history.
+
 ## Configuration
 
 ### Puppet Master Address
