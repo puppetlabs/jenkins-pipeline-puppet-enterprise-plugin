@@ -26,14 +26,32 @@ node {
 This plugin also provides an experimental feature that provides a Hiera
 key/value store for Hiera. Key/value pairs are set using the provided
 `puppetHiera` method.  Pairs are assigned to specific Puppet environments.  The
-accomponying Hiera backend performs a key lookup for the requesting node's
-Puppet environment.
+[hiera-http](https://github.com/crayfishx/hiera-http)  backend performs a key lookup for the requesting node's
+Puppet environment. An example configuration:
 
-To set values:
+```
+:backends:
+  - http
+
+:http:
+  :host: jenkins.example.com
+  :port: 8080
+  :output: json
+  :cache_timeout: 10
+  :failure: graceful
+  :paths:
+    - /hiera/lookup?path=%{clientcert}&key=%{key}
+    - /hiera/lookup?path=%{environment}&key=%{key}
+```
+
+
+To set values from the Jenkins Pipeline script:
 
 ```
 node {
-  puppetHiera environment: 'production', key: 'keyname', value: 'keyvalue'
+  puppetHiera path: 'host.example.com', key: 'keyname', value: 'keyvalue'
+  puppetHiera path: 'dc-location', key: 'keyname', value: 'keyvalue'
+  puppetHiera path: 'production', key: 'keyname', value: 'keyvalue'
 }
 ```
 
@@ -106,4 +124,21 @@ code management in Puppet Enterprise, go here: [https://docs.puppet.com/pe/lates
   puppet.job 'staging'
   puppet.job 'production', concurrency: 10, noop: true
   puppet.job 'production', concurrency: 10, noop: true, credentialsId: 'pe-access-token'
+```
+
+### puppetJob
+
+**groovy script invocation**: puppetHiera()
+
+**Parameters**
+
+* path - The path (scope) of the data lookup from Hiera. Usually this will be an environment name. Required. String
+* key - The name of the key that Hiera will lookup. Required. String
+* value - The value of the key to be returned to Hiera's lookup call. Required. Can be string, array, or hash
+
+**Example**
+
+```
+  puppetHiera path: 'staging', key: 'app-build-version', value: 'master'
+  puppetHiera path: 'production', key: 'app-build-version', value: '8f3ea2'
 ```

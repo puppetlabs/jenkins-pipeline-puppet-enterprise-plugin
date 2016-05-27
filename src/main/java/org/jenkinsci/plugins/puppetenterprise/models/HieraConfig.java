@@ -20,25 +20,25 @@ public class HieraConfig implements Serializable, Saveable {
     loadGlobalConfig();
   }
 
-  public Object getKeyValue(String environment, String key) {
-    HashMap envHierarchy = (HashMap) HieraConfig.hierarchy.get(environment);
+  public Object getKeyValue(String path, String key) {
+    HashMap pathHierarchy = (HashMap) HieraConfig.hierarchy.get(path);
 
-    if (envHierarchy == null) {
+    if (pathHierarchy == null) {
       return null;
     }
 
-    return envHierarchy.get(key);
+    return pathHierarchy.get(key);
   }
 
-  public void setKeyValue(String environment, String key, Object value) {
-    if (HieraConfig.hierarchy.get(environment) == null) {
-      HieraConfig.hierarchy.put(environment, new HashMap());
+  public void setKeyValue(String path, String key, Object value) {
+    if (HieraConfig.hierarchy.get(path) == null) {
+      HieraConfig.hierarchy.put(path, new HashMap());
     }
 
-    HashMap envHierarchy = (HashMap) HieraConfig.hierarchy.get(environment);
+    HashMap pathHierarchy = (HashMap) HieraConfig.hierarchy.get(path);
 
-    envHierarchy.put(key, value);
-    HieraConfig.hierarchy.put(environment, envHierarchy);
+    pathHierarchy.put(key, value);
+    HieraConfig.hierarchy.put(path, pathHierarchy);
 
     try {
       save();

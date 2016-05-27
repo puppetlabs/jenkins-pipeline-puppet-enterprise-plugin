@@ -45,13 +45,13 @@ public final class HieraStep extends AbstractStepImpl {
 
   private static final Logger logger = Logger.getLogger(HieraStep.class.getName());
 
-  private String environment = "";
+  private String path = "";
   private String key = "";
   private Object value = null;
   private HieraConfig hiera = null;
 
-  @DataBoundSetter private void setEnvironment(String environment) {
-    this.environment = Util.fixEmpty(environment);
+  @DataBoundSetter private void setPath(String path) {
+    this.path = Util.fixEmpty(path);
   }
 
   @DataBoundSetter private void setKey(@Nonnull String key) {
@@ -62,8 +62,8 @@ public final class HieraStep extends AbstractStepImpl {
     this.value = value;
   }
 
-  public String getEnvironment() {
-    return this.environment;
+  public String getPath() {
+    return this.path;
   }
 
   public String getKey() {
@@ -79,7 +79,7 @@ public final class HieraStep extends AbstractStepImpl {
   }
 
   public void save() {
-    hiera.setKeyValue(this.environment, this.key, this.value);
+    hiera.setKeyValue(this.path, this.key, this.value);
   }
 
   public static class HieraStepExecution extends AbstractSynchronousStepExecution<Void> {
@@ -106,7 +106,7 @@ public final class HieraStep extends AbstractStepImpl {
     }
 
     @Override public String getDisplayName() {
-      return "Set Hiera data per environment";
+      return "Set Hiera data.";
     }
   }
 }

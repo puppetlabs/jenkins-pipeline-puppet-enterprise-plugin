@@ -38,34 +38,41 @@ public class HieraDataStore implements UnprotectedRootAction {
 
   public void doLookup(StaplerRequest req, StaplerResponse rsp) throws IOException {
     net.sf.json.JSONObject form = null;
+    Map parameters = null;
 
-    try {
-      form = req.getSubmittedForm();
-    } catch(ServletException e) {
-      e.printStackTrace();
-    }
+    parameters = req.getParameterMap();
 
     String returnValue = "";
-    String environment = form.getString("environment");
-    String key = form.getString("key");
+    String pathArr[] = (String[]) parameters.get("path");
+    String path = pathArr[0];
+    String keyArr[] = (String[]) parameters.get("key");
+    String key = keyArr[0];
 
-    Object value = hiera.getKeyValue(environment, key);
+    Object value = hiera.getKeyValue(path, key);
 
     if (value == null) {
-      returnValue = "";
-    }
-
-    if (value instanceof String) {
-      returnValue = (String) value;
-    } else if (value instanceof ArrayList) {
-      ArrayList valueArray = (ArrayList) value;
-      returnValue = new JSONObject(valueArray).toString();
-    } else if (value instanceof HashMap) {
-      HashMap valueHash = (HashMap) value;
-      returnValue = new JSONObject(valueHash).toString();
+      rsp.setStatus(404);
+      return;
     }
 
     rsp.setContentType("application/json;charset=UTF-8");
-    rsp.getOutputStream().print(returnValue);
+    rsp.getOutputStream().print(serializeResult(key, value));
+  }
+
+  private String serializeResult(String key, Object result) {
+    HashMap hash = new HashMap();
+
+    if (result instanceof String) {
+      String valueString = (String) result;
+      hash.put(key, valueString);
+    } else if (result instanceof ArrayList) {
+      ArrayList valueArray = (ArrayList) result;
+      hash.put(key, valueArray);
+    } else if (result instanceof HashMap) {
+      LinkedHashMap valueHash = (LinkedHashMap) result;
+      hash.put(key, valueHash);
+    }
+
+    return new JSONObject(hash).toString();
   }
 }
