@@ -52,6 +52,7 @@ import org.jenkinsci.plugins.plaincredentials.*;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.*;
 import org.apache.http.*;
@@ -87,9 +88,9 @@ public abstract class PuppetEnterpriseStep extends AbstractStepImpl implements S
     this.credentialsId = Util.fixEmpty(credentialsId);
   }
 
-  @DataBoundSetter public void setPuppetMasterUrl(String url) {
-    this.config.setPuppetMasterUrl(url);
-  }
+  // @DataBoundSetter public void setPuppetMasterUrl(String url) {
+  //   this.config.setPuppetMasterUrl(url);
+  // }
 
   public void loadConfig() {
     this.config = new PuppetEnterpriseConfig();
@@ -148,11 +149,11 @@ public abstract class PuppetEnterpriseStep extends AbstractStepImpl implements S
       sslsf = new SSLConnectionSocketFactory(sslcontext,
                 SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
 
-    } catch(CertificateException e) { e.printStackTrace(); }
-      catch(KeyStoreException e) { e.printStackTrace(); }
-      catch(IOException e) { e.printStackTrace(); }
-      catch(NoSuchAlgorithmException e) { e.printStackTrace(); }
-      catch(KeyManagementException e) { e.printStackTrace(); }
+    } catch(CertificateException e) { logger.log(Level.SEVERE, e.getMessage()); }
+      catch(KeyStoreException e) { logger.log(Level.SEVERE, e.getMessage()); }
+      catch(IOException e) { logger.log(Level.SEVERE, e.getMessage()); }
+      catch(NoSuchAlgorithmException e) { logger.log(Level.SEVERE, e.getMessage()); }
+      catch(KeyManagementException e) { logger.log(Level.SEVERE, e.getMessage()); }
 
     if (sslsf == null) { System.out.println("sslsf is null"); }
 
@@ -190,7 +191,6 @@ public abstract class PuppetEnterpriseStep extends AbstractStepImpl implements S
       }
 
       String json = IOUtils.toString(response.getEntity().getContent());
-      System.out.println(json);
       JsonParserFactory factory = JsonParserFactory.getInstance();
       JSONParser parser = factory.newJsonParser();
       Integer responseCode = response.getStatusLine().getStatusCode();
@@ -208,7 +208,7 @@ public abstract class PuppetEnterpriseStep extends AbstractStepImpl implements S
         }
 
       } catch(JSONParsingException e) {
-        e.printStackTrace();
+        logger.log(Level.SEVERE, e.getMessage());
 
         HashMap errorContent = new HashMap();
         errorContent.put("error", json);
@@ -218,7 +218,7 @@ public abstract class PuppetEnterpriseStep extends AbstractStepImpl implements S
       peResponse = new PEResponse(responseBody, responseCode);
 
     } catch(IOException e) {
-      e.printStackTrace();
+      logger.log(Level.SEVERE, e.getMessage());
     }
 
     return peResponse;

@@ -23,6 +23,7 @@ import hudson.util.FormValidation;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.HttpRedirect;
 import org.kohsuke.stapler.HttpResponse;
+import org.kohsuke.stapler.HttpResponses;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -57,7 +58,7 @@ public class PuppetEnterpriseManagement extends ManagementLink {
     return config.getPuppetMasterUrl();
   }
 
-  public HttpResponse doSaveConfig(StaplerRequest req) {
+  public HttpResponse doSaveConfig(StaplerRequest req) throws IOException {
     try {
       JSONObject json = req.getSubmittedForm().getJSONObject("config");
       config.setPuppetMasterUrl(json.getString("puppetMasterUrl"));
@@ -65,11 +66,12 @@ public class PuppetEnterpriseManagement extends ManagementLink {
       try {
         config.save();
       } catch(IOException e) {
-        e.printStackTrace();
+        return HttpResponses.error(599, e.getMessage());
       }
-    } catch (ServletException e) {
-      e.printStackTrace();
+    } catch(ServletException e) {
+      return HttpResponses.error(599, e.getMessage());
     }
+
     return new HttpRedirect("index");
   }
 

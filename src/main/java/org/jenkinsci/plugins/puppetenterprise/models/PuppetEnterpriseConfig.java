@@ -29,7 +29,7 @@ public class PuppetEnterpriseConfig implements Serializable, Saveable {
     loadGlobalConfig();
   }
 
-  public void setPuppetMasterUrl(String url) {
+  public void setPuppetMasterUrl(String url) throws IOException, java.net.UnknownHostException {
     this.puppetMasterUrl = url;
     this.puppetMasterCACertificate = retrievePuppetMasterCACertificate();
   }
@@ -39,37 +39,27 @@ public class PuppetEnterpriseConfig implements Serializable, Saveable {
   }
 
   public String getPuppetMasterCACertificate() {
-    if (this.puppetMasterCACertificate.equals("")) {
-      this.puppetMasterCACertificate = retrievePuppetMasterCACertificate();
-    }
-
     return this.puppetMasterCACertificate;
   }
 
-  private String retrievePuppetMasterCACertificate() {
+  private String retrievePuppetMasterCACertificate() throws java.net.UnknownHostException, IOException {
     String returnString = "";
 
+    SSLContextBuilder builder = new SSLContextBuilder();
 
     try {
-      SSLContextBuilder builder = new SSLContextBuilder();
+      builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
 
-      try {
-        builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
+      SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(builder.build());
+      CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
 
-        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(builder.build());
-        CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
-
-        HttpGet httpGet = new HttpGet("https://" + puppetMasterUrl + ":8140/puppet-ca/v1/certificate/ca");
-        returnString = IOUtils.toString(httpclient.execute(httpGet).getEntity().getContent());
-      } catch(java.security.NoSuchAlgorithmException e) {
-        e.printStackTrace();
-      } catch(java.security.KeyStoreException e) {
-        e.printStackTrace();
-      } catch(java.security.KeyManagementException e) {
-        e.printStackTrace();
-      }
-
-    } catch(IOException e) {
+      HttpGet httpGet = new HttpGet("https://" + puppetMasterUrl + ":8140/puppet-ca/v1/certificate/ca");
+      returnString = IOUtils.toString(httpclient.execute(httpGet).getEntity().getContent());
+    } catch(java.security.NoSuchAlgorithmException e) {
+      e.printStackTrace();
+    } catch(java.security.KeyStoreException e) {
+      e.printStackTrace();
+    } catch(java.security.KeyManagementException e) {
       e.printStackTrace();
     }
 

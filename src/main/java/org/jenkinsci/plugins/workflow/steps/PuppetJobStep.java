@@ -7,6 +7,7 @@ import hudson.Util;
 import hudson.util.ListBoxModel;
 import hudson.security.ACL;
 import java.util.ArrayList;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
 import org.apache.commons.lang.StringUtils;
@@ -134,6 +135,9 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
         job = (HashMap) responseHash.get("job");
         jobID = (String) job.get("id");
         jobStatus = "";
+
+        listener.getLogger().println("Successfully created Puppet job " + jobID);
+        logger.log(Level.FINEST, "Successfully created Puppet job " + jobID);
       } catch(NullPointerException e){
         throw new PEException(responseHash.toString(), 200);
       }
@@ -160,7 +164,9 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
       } while (!jobStatus.equals("finished") && !jobStatus.equals("stopped") && !jobStatus.equals("failed"));
 
       if (jobStatus.equals("failed") || jobStatus.equals("stopped")) {
-        throw new PEException("Job " + jobID + " " + jobStatus);
+        throw new PEException("Job " + jobID + " " + jobStatus, listener);
+      } else {
+        listener.getLogger().println("Successfully ran Puppet job " + jobID);
       }
 
       return null;

@@ -7,6 +7,7 @@ import hudson.Util;
 import hudson.util.ListBoxModel;
 import hudson.security.ACL;
 import java.util.ArrayList;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
 import org.apache.commons.lang.StringUtils;
@@ -79,7 +80,10 @@ public final class CodeDeployStep extends PuppetEnterpriseStep implements Serial
         ArrayList envResults = (ArrayList) result.getResponseBody();
         HashMap firstHash = (HashMap) envResults.get(0);
         HashMap error = (HashMap) firstHash.get("error");
-        throw new PEException(error.toString(), result.getResponseCode());
+        throw new PEException(error.toString(), result.getResponseCode(), listener);
+      } else {
+        listener.getLogger().println("Successfully deployed " + environments + " Puppet environment code.");
+        logger.log(Level.FINE, "Successfully deployed " + environments + " Puppet environment code.");
       }
 
       return null;
