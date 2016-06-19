@@ -12,9 +12,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class HieraConfig implements Serializable, Saveable {
   private static HashMap hierarchy = new HashMap();
+
+  private static final Logger logger = Logger.getLogger(HieraConfig.class.getName());
 
   public HieraConfig() {
     loadGlobalConfig();
@@ -43,7 +47,7 @@ public class HieraConfig implements Serializable, Saveable {
     try {
       save();
     } catch(IOException e) {
-      e.printStackTrace();
+      logger.log(Level.WARNING, "Error saving Hiera configuration: " + e.getMessage());
     }
   }
 
@@ -54,7 +58,7 @@ public class HieraConfig implements Serializable, Saveable {
         HieraConfig.hierarchy = (HashMap) xml.read();
       }
     } catch (IOException e) {
-      e.printStackTrace();
+      logger.log(Level.SEVERE, "Error loading Hiera configuration: " + e.getMessage());
     }
   }
 

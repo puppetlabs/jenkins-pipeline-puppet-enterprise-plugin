@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
-import hudson.model.UnprotectedRootAction;
+import hudson.model.RootAction;
 import hudson.Extension;
 import org.json.*;
 import javax.servlet.ServletException;
@@ -12,7 +12,7 @@ import javax.servlet.ServletException;
 import org.jenkinsci.plugins.puppetenterprise.models.HieraConfig;
 
 @Extension
-public class HieraDataStore implements UnprotectedRootAction {
+public class HieraDataStore implements RootAction {
   private static final String ICON_PATH = "/plugin/workflow-puppet-enterprise/images/cfg_logo.png";
 
   private HieraConfig hiera = null;

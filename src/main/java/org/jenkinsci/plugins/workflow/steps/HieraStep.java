@@ -7,6 +7,7 @@ import hudson.Util;
 import hudson.util.ListBoxModel;
 import hudson.security.ACL;
 import java.util.ArrayList;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
 import org.apache.commons.lang.StringUtils;
