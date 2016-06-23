@@ -21,6 +21,21 @@ public class HieraDataStore implements RootAction {
     hiera = new HieraConfig();
   }
 
+  public String[] getPaths() {
+    Set<String> pathSet = hiera.getPaths();
+    return pathSet.toArray(new String[pathSet.size()]);
+  }
+
+  public String[] getKeys(String path) {
+    Set<String> keySet = hiera.getKeys(path);
+    return keySet.toArray(new String[keySet.size()]);
+  }
+
+  public String getKeyValue(String path, String key) {
+    Object value = hiera.getKeyValue(path, key);
+    return value.toString();
+  }
+
   @Override
   public String getUrlName() {
     return "hiera";

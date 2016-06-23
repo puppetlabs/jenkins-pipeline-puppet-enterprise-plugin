@@ -34,6 +34,15 @@ public class HieraConfig implements Serializable, Saveable {
     return pathHierarchy.get(key);
   }
 
+  public Set<String> getPaths() {
+    return hierarchy.keySet();
+  }
+
+  public Set<String> getKeys(String path) {
+    HashMap pathHierarchy = (HashMap) hierarchy.get(path);
+    return pathHierarchy.keySet();
+  }
+
   public void setKeyValue(String path, String key, Object value) {
     if (HieraConfig.hierarchy.get(path) == null) {
       HieraConfig.hierarchy.put(path, new HashMap());
