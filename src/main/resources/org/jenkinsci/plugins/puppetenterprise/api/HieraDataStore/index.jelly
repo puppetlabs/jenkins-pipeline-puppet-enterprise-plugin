@@ -5,12 +5,12 @@
     <st:include page="sidepanel.jelly" />
     <l:main-panel>
 
-      <j:forEach items="${it.getPaths()}" var="path">
-      <h2>${path}</h2>
-        <j:forEach items="${it.getKeys(path)}" var="key">
-          <li><strong>${key}</strong> – ${it.getKeyValue(path, key)}</li>
-        </j:forEach>
-      </j:forEach>
+      <f:repeatable items="${it.getPaths()}" var="path">
+        <span><input type="button" value="${%Delete}" class="repeatable-delete" style="float: right; margin-left: 1em;" />${path}</span>
+        <f:repeatable items="${it.getKeys(path)}" var="key">
+          <li><input type="button" value="${%Delete}" class="repeatable-delete" style="float: right; margin-left: 1em;" /> <strong>${key}</strong> – ${it.getKeyValue(path, key)}</li>
+        </f:repeatable>
+      </f:repeatable>
 
       <script>
       function cfp_confirmDelete(name) {
