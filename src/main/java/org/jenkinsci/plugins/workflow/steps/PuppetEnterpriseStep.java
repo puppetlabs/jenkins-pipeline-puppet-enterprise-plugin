@@ -15,6 +15,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.*;
 import javax.net.ssl.*;
+import java.net.*;
 import com.google.inject.Inject;
 
 import org.apache.http.*;
@@ -158,6 +159,11 @@ public abstract class PuppetEnterpriseStep extends AbstractStepImpl implements S
     if (sslsf == null) { System.out.println("sslsf is null"); }
 
     return HttpClients.custom().setSSLSocketFactory(sslsf).build();
+  }
+
+  public final PEResponse request(String url, String method, Map body) throws Exception {
+    URI uri = new URI (url);
+    return this.request(uri.getPath(), uri.getPort(), method, body);
   }
 
   public final PEResponse request(String endpoint, Integer port, String method, Map body) throws Exception {

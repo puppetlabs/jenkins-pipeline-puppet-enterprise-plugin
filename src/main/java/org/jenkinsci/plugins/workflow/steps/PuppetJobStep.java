@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import hudson.model.Run;
 import hudson.model.Item;
 import hudson.model.TaskListener;
+import java.net.*;
 import jenkins.model.Jenkins;
 import javax.annotation.Nonnull;
 
@@ -143,7 +144,22 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
       }
 
       do {
-        PEResponse jobStatusResponse = step.request("/orchestrator/v1" + jobID, 8143, "GET", null);
+        String peRequestPath = "/orchestrator/v1/" + jobID;
+        Integer peRequestPort = 8143;
+
+        // The orchestrator API in 2015.2 and 2016.1 returned
+        // a relative path for the job ID while 2016.2 returns
+        // a full URL. This code checks which was returned so
+        // we can support older PE installs.  This should eventually
+        // be deprecated.
+        try {
+          URI uri = new URI (jobID);
+          peRequestPath = uri.getPath();
+          peRequestPort = uri.getPort();
+        } catch(URISyntaxException e) { //do nothing
+        }
+
+        PEResponse jobStatusResponse = step.request(peRequestPath, peRequestPort, "GET", null);
         HashMap jobStatusResponseHash = (HashMap) jobStatusResponse.getResponseBody();
 
         if (!step.isSuccessful(jobStatusResponse)) {
