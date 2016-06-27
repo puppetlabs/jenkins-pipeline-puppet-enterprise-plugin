@@ -1,0 +1,40 @@
+.scope-delete {
+  position:relative;
+  left:800px;
+  top:-20px;
+}
+
+.scope-name {
+  font-size: 2em;
+}
+
+.key-name {
+  display:table-cell;
+  width:300px;
+}
+
+.key-value {
+  display:table-cell;
+  width:478px;
+}
+
+.key-pair-delete {
+  display:table-cell;
+}
+
+.scope-container {
+  margin-bottom: 30px;
+}
+
+.key-value-container {
+  padding-left: 20px;
+  background: #efefef;
+}
+
+.repeated-chunk:nth-of-type(even) {
+  background: white;
+}
+
+.repeated-container {
+  width: 922px;
+}

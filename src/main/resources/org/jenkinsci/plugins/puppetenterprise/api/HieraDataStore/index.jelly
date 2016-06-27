@@ -1,15 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
-  <l:layout norefresh="true">
+  <l:header>
+    <link rel="stylesheet" href="${rootURL}/plugin/workflow-puppet-enterprise/css/hiera.css" type="text/css"/>
+  </l:header>
+
+  <l:layout norefresh="true" css="/plugin/workflow-puppet-enterprise/css/hiera.css">
     <st:include page="sidepanel.jelly" />
     <l:main-panel>
 
-      <f:repeatable items="${it.getPaths()}" var="path">
-        <span><input type="button" value="${%Delete}" class="repeatable-delete" style="float: right; margin-left: 1em;" />${path}</span>
-        <f:repeatable items="${it.getKeys(path)}" var="key">
-          <li><input type="button" value="${%Delete}" class="repeatable-delete" style="float: right; margin-left: 1em;" /> <strong>${key}</strong> – ${it.getKeyValue(path, key)}</li>
-        </f:repeatable>
+      <f:repeatable noAddButton="true" items="${it.getPaths()}" var="path">
+        <div class="scope-container">
+          <div class="scope-name">${path}</div>
+          <div class="scope-delete">
+            <input type="button" value="${%Delete Scope}" class="repeatable-delete" />
+          </div>
+
+          <f:repeatable noAddButton="true" items="${it.getKeys(path)}" var="key">
+            <div class="key-value-container">
+              <div class="key-name">
+                <strong>${key}</strong>
+              </div>
+              <div class="key-value">
+                ${it.getKeyValue(path, key)}
+              </div>
+              <div class="key-pair-delete">
+                <input type="button" value="${%Delete Key}" class="repeatable-delete"/>
+              </div>
+            </div>
+          </f:repeatable>
+        </div>
       </f:repeatable>
 
       <script>
