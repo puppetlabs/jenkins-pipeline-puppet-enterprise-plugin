@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
-  <l:header>
-    <link rel="stylesheet" href="${rootURL}/plugin/workflow-puppet-enterprise/css/hiera.css" type="text/css"/>
-  </l:header>
-
+<j:new var="h" className="hudson.Functions" />
   <l:layout norefresh="true" css="/plugin/workflow-puppet-enterprise/css/hiera.css">
     <st:include page="sidepanel.jelly" />
     <l:main-panel>
+      <script type="text/javascript" src="${rootURL}/plugin/workflow-puppet-enterprise/js/run_prettify.js?lang=yaml&amp;lan=groovy&amp;skin=sunburst"></script>
 
-      <f:repeatable noAddButton="true" items="${it.getPaths()}" var="path">
+      <h1>Hiera data store</h1>
+      <p>This page shows the key/value pairs stored for each defined scope.
+
+      <h1>Scopes</h1>
+      <br/><br/>
+
+      <f:repeatable name="scopes" noAddButton="true" items="${it.getPaths()}" var="path">
         <div class="scope-container">
           <div class="scope-name">${path}</div>
           <div class="scope-delete">
-            <input type="button" value="${%Delete Scope}" class="repeatable-delete" />
+            <input type="button" value="${%Delete Scope}" class="repeatable-delete danger"/>
           </div>
 
           <f:repeatable noAddButton="true" items="${it.getKeys(path)}" var="key">
@@ -32,6 +36,40 @@
         </div>
       </f:repeatable>
 
+      <h1>How to use this plugin</h1>
+
+      To define new scopes and key/value pairs, use the `puppetHiera` in your pipeline groovy scripts.  For example:</p>
+      <div class="codeblock">
+      <pre class="prettyprint"><![CDATA[puppetHiera path: 'development', key: 'build-version', value: 'v1.0.1']]></pre>
+      </div>
+      <p>Using the hiera-http backend, you can specify an order to query scopes defined in Jenkins for
+      a matching key. If the key is not found in the first scope, it will query the next until it has
+      exhausted the list of scopes to query.</p>
+
+      <p>Here is an example hiera-http configuration that should be placed in the hiera.conf on the Puppet server. Whenever a
+      node makes a request for a key during catalog compilation, it will first look for the key in a scope
+      that matches its certname, then look for the key in the scope that matches the node's virtualization
+      platform, and finally look in a scope that matches the node's environment.</p>
+
+      <div class="codeblock">
+      <pre class="prettyprint"> <![CDATA[
+:backends:
+  - http
+  - yaml
+
+:http:
+  :host: ${request.getServerName()}
+  :port: ${request.getLocalPort()}
+  :output: json
+  :cache_timeout: 10
+  :failure: graceful
+  :paths:
+    - "${rootURL}/hiera/lookup?path=%{::trusted.certname}&key=%{key}"
+    - "${rootURL}/hiera/lookup?path=%{::virtual}&key=%{key}"
+    - "${rootURL}/hiera/lookup?path=%{::environment}&key=%{key}"
+      ]]>
+      </pre>
+      </div>
       <script>
       function cfp_confirmDelete(name) {
         if (confirm("Sure you want to delete ["+name+"]?")) {
