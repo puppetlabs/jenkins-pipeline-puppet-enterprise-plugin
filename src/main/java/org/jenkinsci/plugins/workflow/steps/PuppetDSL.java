@@ -32,6 +32,7 @@ import org.jenkinsci.plugins.workflow.cps.GlobalVariable;
       super(new StaticWhitelist(
         "method groovy.lang.GroovyObject getProperty java.lang.String",
         "method java.lang.Class isInstance java.lang.Object",
+        "method java.lang.Throwable getMessage",
         "method groovy.lang.GroovyObject invokeMethod java.lang.String java.lang.Object"));
     }
   }
