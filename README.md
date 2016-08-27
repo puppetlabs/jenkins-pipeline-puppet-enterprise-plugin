@@ -15,8 +15,9 @@ server.
 
 ```
 node {
-    puppetCode environment: 'production', credentialsId: 'pe-access-token'
-    puppetJob  environment: 'production', target: 'App[instance]', credentialsId: 'pe-access-token'
+    puppet.credentials 'pe-access-token'
+    puppet.codeDeploy 'production'
+    puppet.job 'production', target: 'App[instance'], noop: true, concurrency: 10
 }
 ```
 
@@ -46,40 +47,41 @@ being used from the Jenkins Pipeline scripts.
 
 ## Pipeline Steps
 
-### puppetCode
+### puppet.codeDeploy
 
-The `puppetCode` method tells Puppet Enterprise to deploy new Puppet code,
+The `puppet.codeDeploy` method tells Puppet Enterprise to deploy new Puppet code,
 Hiera data, and modules to a specified Puppet environment. To lean more about
 code management in Puppet Enterprise, go here: [https://docs.puppet.com/pe/latest/code_mgr.html]
 
-**groovy script invocation**: puppetCode()
+**groovy script invocation**: puppet.codeDeploy()
 
 **Parameters**
 
-* environment
-* credentialsId
+* environment - The environment to deploy. String. Required
+* credentials - The Jenkins credentials storing the PE RBAC token. String. Required if puppet.credentials not used.
 
 **Example**
 
 ```
-  puppetCode environment: 'production', credentialsId: 'pe-access-token'
+  puppet.codeDeploy 'production', credentials: 'pe-access-token'
 ```
 
-### puppetJob
+### puppet.job
 
-**groovy script invocation**: puppetJob()
+**groovy script invocation**: puppet.job()
 
 **Parameters**
 
 * environment - The environment to run the job in. String
 * target - Target in environment to deploy to. Can be app, app instance, or app component. Defaults to entire environment. String
-* credentialsId - ID of the Jenkins Secret text credentials. String
+* credentialsId - ID of the Jenkins Secret text credentials. String. Required if puppet.credentials not used
 * concurrency - Level of maximum concurrency when issuing Puppet runs. Defaults to unlimited. Integer.
 * noop - Whether to run Puppet in noop mode. Defaults to false. Boolean
 
 **Example**
 
 ```
-  puppetJob environment: 'staging', credentialsId: 'pe-access-token'
-  puppetJob environment: 'production', concurrency: 10, noop: true, credentialsId: 'pe-access-token'
+  puppet.job 'staging'
+  puppet.job 'production', concurrency: 10, noop: true
+  puppet.job 'production', concurrency: 10, noop: true, credentialsId: 'pe-access-token'
 ```
