@@ -56,7 +56,7 @@ public class HieraConfig implements Serializable, Saveable {
     try {
       save();
     } catch(IOException e) {
-      logger.log(Level.WARNING, "Error saving Hiera configuration: " + e.getMessage());
+      logger.log(Level.SEVERE, "Error saving Hiera configuration: " + e.getMessage());
     }
   }
 
