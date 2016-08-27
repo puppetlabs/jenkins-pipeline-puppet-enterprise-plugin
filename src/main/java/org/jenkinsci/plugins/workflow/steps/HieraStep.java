@@ -81,6 +81,7 @@ public final class HieraStep extends AbstractStepImpl {
 
   public void save() {
     hiera.setKeyValue(this.path, this.key, this.value);
+    logger.log(Level.INFO, "Successfully saved key/value pair " + this.key + "/" + this.value + " to path " + this.path + ".");
   }
 
   public static class HieraStepExecution extends AbstractSynchronousStepExecution<Void> {
