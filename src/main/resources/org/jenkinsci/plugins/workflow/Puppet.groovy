@@ -72,6 +72,27 @@ class Puppet implements Serializable {
     }
   }
 
+  public <V> V hiera(Map parameters = [:]) {
+    String credentials
+
+    if (parameters.credentials) {
+      credentials = parameters.credentials
+    } else {
+      credentials = credentialsId
+    }
+
+    assert parameters.path instanceof String
+    assert parameters.key instanceof String
+
+    if(credentials == null) {
+      System.out "No Credentials Provided for puppet.run call"
+    }
+
+    node {
+      script.puppetHiera(path: parameters.path, key: parameters.key, value: parameters.value)
+    }
+  }
+
   private <V> V node(Closure<V> body) {
     if (script.env.NODE_NAME != null) {
         // Already inside a node block.

@@ -2,7 +2,7 @@
 
 This plugin adds Jenkins Pipeline steps for Puppet Enterprise. The provided
 steps make it easy to interface with Puppet Enterprise services such as the
-code management service and orchestrator service. 
+code management service and orchestrator service.
 
 # Features
 
@@ -25,7 +25,7 @@ node {
 
 This plugin also provides an experimental feature that provides a Hiera
 key/value store for Hiera. Key/value pairs are set using the provided
-`puppetHiera` method.  Pairs are assigned to specific Puppet environments.  The
+`puppet.hiera` method.  Pairs are assigned to specific Puppet environments.  The
 [hiera-http](https://github.com/crayfishx/hiera-http)  backend performs a key lookup for the requesting node's
 Puppet environment. An example configuration:
 
@@ -49,9 +49,9 @@ To set values from the Jenkins Pipeline script:
 
 ```
 node {
-  puppetHiera path: 'host.example.com', key: 'keyname', value: 'keyvalue'
-  puppetHiera path: 'dc-location', key: 'keyname', value: 'keyvalue'
-  puppetHiera path: 'production', key: 'keyname', value: 'keyvalue'
+  puppet.hiera path: 'host.example.com', key: 'keyname', value: 'keyvalue'
+  puppet.hiera path: 'dc-location', key: 'keyname', value: 'keyvalue'
+  puppet.hiera path: 'production', key: 'keyname', value: 'keyvalue'
 }
 ```
 
@@ -126,9 +126,9 @@ code management in Puppet Enterprise, go here: [https://docs.puppet.com/pe/lates
   puppet.job 'production', concurrency: 10, noop: true, credentialsId: 'pe-access-token'
 ```
 
-### puppetHiera
+### puppet.hiera
 
-**groovy script invocation**: puppetHiera()
+**groovy script invocation**: puppet.hiera()
 
 **Parameters**
 
@@ -139,8 +139,8 @@ code management in Puppet Enterprise, go here: [https://docs.puppet.com/pe/lates
 **Example**
 
 ```
-  puppetHiera path: 'staging', key: 'app-build-version', value: 'master'
-  puppetHiera path: 'production', key: 'app-build-version', value: '8f3ea2'
-  puppetHiera path: 'dc1-us-example', key: 'list-example', value: ['a,'b','c']
-  puppetHiera path: 'host.example.com', key: 'hash-example', value: ['a':1, 'bool':false, 'c': 'string']
+  puppet.hiera path: 'staging', key: 'app-build-version', value: 'master'
+  puppet.hiera path: 'production', key: 'app-build-version', value: '8f3ea2'
+  puppet.hiera path: 'dc1-us-example', key: 'list-example', value: ['a,'b','c']
+  puppet.hiera path: 'host.example.com', key: 'hash-example', value: ['a':1, 'bool':false, 'c': 'string']
 ```
