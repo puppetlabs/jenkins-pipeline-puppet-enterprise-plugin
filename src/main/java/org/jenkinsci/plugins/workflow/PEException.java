@@ -26,11 +26,10 @@ public class PEException extends Exception {
   }
 
   public PEException(String message, Integer code, TaskListener listener) {
-    listener.getLogger().println(message);
+    listener.getLogger().println("PE API call resulted in code (" + code + ") and message \"" + message + "\"");
   }
 
   public PEException(String message, TaskListener listener) {
-    super(message);
     listener.getLogger().println(message);
   }
 }
