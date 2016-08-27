@@ -145,7 +145,7 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
         jobUrlElements = jobID.split("/");
 
         listener.getLogger().println("Successfully created Puppet job " + jobUrlElements[jobUrlElements.length - 1]);
-        logger.log(Level.FINEST, "Successfully created Puppet job " + jobUrlElements[jobUrlElements.length - 1]);
+        logger.log(Level.INFO, "Successfully created Puppet job " + jobUrlElements[jobUrlElements.length - 1]);
       } catch(NullPointerException e){
         throw new PEException(responseHash.toString(), 200);
       }

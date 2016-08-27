@@ -84,7 +84,7 @@ public final class CodeDeployStep extends PuppetEnterpriseStep implements Serial
         throw new PEException(error.toString(), result.getResponseCode(), listener);
       } else {
         listener.getLogger().println("Successfully deployed " + environments + " Puppet environment code.");
-        logger.log(Level.FINE, "Successfully deployed " + environments + " Puppet environment code.");
+        logger.log(Level.INFO, "Successfully deployed " + environments + " Puppet environment code.");
       }
 
       return null;
