@@ -32,7 +32,7 @@ class Puppet implements Serializable {
     }
   }
 
-  public <V> V run(Map parameters = [:], String env) {
+  public <V> V job(Map parameters = [:], String env) {
     String credentials
     String target = null
     Boolean noop = false
