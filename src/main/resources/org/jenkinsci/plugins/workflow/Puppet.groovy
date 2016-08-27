@@ -17,17 +17,17 @@ class Puppet implements Serializable {
   public <V> V codeDeploy(Map parameters = [:], String env) {
     String credentials
 
-    if (parameters.credentials) {
-      credentials = parameters.credentials
-    } else {
-      credentials = credentialsId
-    }
-
-    if(credentials == null) {
-      System.out "No Credentials Provided for puppet.codeDeploy call"
-    }
-
     node {
+      if (parameters.credentials) {
+        credentials = parameters.credentials
+      } else {
+        credentials = credentialsId
+      }
+
+      if(credentials == null) {
+        script.error(message: "No Credentials provided for puppet.codeDeploy. Specify 'credentials' parameter or use puppet.credentials()")
+      }
+
       script.puppetCode(environment: env, credentialsId: credentialsId)
     }
   }
@@ -38,33 +38,37 @@ class Puppet implements Serializable {
     Boolean noop = false
     Integer concurrency = null
 
-    if (parameters.credentials) {
-      credentials = parameters.credentials
-    } else {
-      credentials = credentialsId
-    }
-
-    if (parameters.target) {
-      assert parameters.target instanceof String
-      target = parameters.target
-    }
-
-    if (parameters.noop) {
-      assert parameters.noop instanceof Boolean
-      noop = parameters.noop
-    }
-
-    if (parameters.concurrency) {
-      assert parameters.concurrency instanceof Integer
-      concurrency = parameters.concurrency
-    }
-
-    if(credentials == null) {
-      System.out "No Credentials Provided for puppet.run call"
-    }
-
     node {
-      script.puppetJob(environment: env, target: target, concurrency: concurrency, credentialsId: credentials)
+      if (parameters.credentials) {
+        credentials = parameters.credentials
+      } else {
+        credentials = credentialsId
+      }
+
+      if (parameters.target) {
+        assert parameters.target instanceof String
+        target = parameters.target
+      }
+
+      if (parameters.noop) {
+        assert parameters.noop instanceof Boolean
+        noop = parameters.noop
+      }
+
+      if (parameters.concurrency) {
+        assert parameters.concurrency instanceof Integer
+        concurrency = parameters.concurrency
+      }
+
+      if(credentials == null) {
+        script.error(message: "No Credentials provided for puppet.run. Specify 'credentials' parameter or use puppet.credentials()")
+      }
+
+      try {
+        script.puppetJob(environment: env, target: target, concurrency: concurrency, credentialsId: credentials)
+      } catch(err) {
+        script.error(message: err.message)
+      }
     }
   }
 
