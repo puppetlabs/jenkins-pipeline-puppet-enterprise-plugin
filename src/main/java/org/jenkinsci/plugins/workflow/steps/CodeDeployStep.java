@@ -80,6 +80,7 @@ public final class CodeDeployStep extends PuppetEnterpriseStep implements Serial
         ArrayList envResults = (ArrayList) result.getResponseBody();
         HashMap firstHash = (HashMap) envResults.get(0);
         HashMap error = (HashMap) firstHash.get("error");
+
         throw new PEException(error.toString(), result.getResponseCode(), listener);
       } else {
         listener.getLogger().println("Successfully deployed " + environments + " Puppet environment code.");

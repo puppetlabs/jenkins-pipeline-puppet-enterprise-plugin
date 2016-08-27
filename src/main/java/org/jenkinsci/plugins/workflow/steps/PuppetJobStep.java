@@ -125,20 +125,27 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
           error = errorArray.toString();
         }
 
+        if (result.getResponseCode() == 404 && error == null) {
+          error = "Environment " + step.getEnvironment() + " not found";
+        }
+
         throw new PEException(error, result.getResponseCode());
       }
 
       HashMap job = new HashMap();
       String jobID = "";
       String jobStatus = "";
+      String[] jobUrlElements = jobID.split("/");
 
       try {
         job = (HashMap) responseHash.get("job");
         jobID = (String) job.get("id");
         jobStatus = "";
 
-        listener.getLogger().println("Successfully created Puppet job " + jobID);
-        logger.log(Level.FINEST, "Successfully created Puppet job " + jobID);
+        jobUrlElements = jobID.split("/");
+
+        listener.getLogger().println("Successfully created Puppet job " + jobUrlElements[jobUrlElements.length - 1]);
+        logger.log(Level.FINEST, "Successfully created Puppet job " + jobUrlElements[jobUrlElements.length - 1]);
       } catch(NullPointerException e){
         throw new PEException(responseHash.toString(), 200);
       }
@@ -182,7 +189,7 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
       if (jobStatus.equals("failed") || jobStatus.equals("stopped")) {
         throw new PEException("Job " + jobID + " " + jobStatus, listener);
       } else {
-        listener.getLogger().println("Successfully ran Puppet job " + jobID);
+        listener.getLogger().println("Successfully ran Puppet job " + jobUrlElements[jobUrlElements.length - 1]);
       }
 
       return null;
