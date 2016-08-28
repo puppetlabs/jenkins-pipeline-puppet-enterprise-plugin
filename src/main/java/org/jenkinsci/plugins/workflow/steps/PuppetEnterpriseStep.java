@@ -232,5 +232,7 @@ public abstract class PuppetEnterpriseStep extends AbstractStepImpl implements S
 
   public String getCredentialsId() { return credentialsId; }
 
-  public String getPuppetMasterUrl() { return config.getPuppetMasterUrl(); }
+  public String getPuppetMasterUrl() {
+    return config.getPuppetMasterUrl();
+  }
 }

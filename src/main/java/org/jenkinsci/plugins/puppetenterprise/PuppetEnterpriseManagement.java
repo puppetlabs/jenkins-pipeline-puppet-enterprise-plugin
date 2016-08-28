@@ -40,6 +40,7 @@ public class PuppetEnterpriseManagement extends ManagementLink {
     this.config = new PuppetEnterpriseConfig();
   }
 
+  @Override
   public String getDisplayName() {
     return "Puppet Enterprise";
   }
@@ -54,25 +55,35 @@ public class PuppetEnterpriseManagement extends ManagementLink {
     return ICON_PATH;
   }
 
-  public String getPuppetMasterUrl() {
+  public String getMaster() {
     return config.getPuppetMasterUrl();
   }
 
-  public HttpResponse doSaveConfig(StaplerRequest req) throws IOException {
+  public FormValidation doCheckMaster(@QueryParameter String value, @QueryParameter String masterUrl) throws IOException, ServletException {
+    try {
+      config.validatePuppetMasterUrl(masterUrl);
+      return FormValidation.ok();
+    } catch(java.net.UnknownHostException e) {
+      return FormValidation.error("Unknown host");
+    } catch(java.security.NoSuchAlgorithmException e) {
+      return FormValidation.error("Unable to negotiate SSL connection with host. " + e.getMessage());
+    } catch(java.security.KeyStoreException e) {
+      return FormValidation.error("Unable to negotiate SSL connection with host. " + e.getMessage());
+    } catch(java.security.KeyManagementException e) {
+      return FormValidation.error("Unable to negotiate SSL connection with host. " + e.getMessage());
+    }
+  }
+
+  public void doSaveConfig(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
     try {
       JSONObject json = req.getSubmittedForm().getJSONObject("config");
-      config.setPuppetMasterUrl(json.getString("puppetMasterUrl"));
 
-      try {
-        config.save();
-      } catch(IOException e) {
-        return HttpResponses.error(599, e.getMessage());
-      }
-    } catch(ServletException e) {
-      return HttpResponses.error(599, e.getMessage());
+      config.setPuppetMasterUrl(json.getString("puppetMasterUrl"));
+    } catch(Exception e) {
+      throw new ServletException(e);
     }
 
-    return new HttpRedirect("index");
+    rsp.sendRedirect(".");
   }
 
   public String getIconUrl(String rootUrl) {

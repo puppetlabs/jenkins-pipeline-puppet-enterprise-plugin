@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
+import java.net.Socket;
 
 import org.apache.http.*;
 import org.apache.http.util.ExceptionUtils;
@@ -22,16 +23,24 @@ import org.apache.http.conn.ssl.*;
 import org.apache.commons.io.IOUtils;
 
 public class PuppetEnterpriseConfig implements Serializable, Saveable {
-  private String puppetMasterUrl = "";
+  private String puppetMasterUrl = null;
   private String puppetMasterCACertificate = "";
 
   public PuppetEnterpriseConfig() {
     loadGlobalConfig();
   }
 
-  public void setPuppetMasterUrl(String url) throws IOException, java.net.UnknownHostException {
+  public void validatePuppetMasterUrl(String url) throws IOException, java.net.UnknownHostException,
+    java.security.NoSuchAlgorithmException, java.security.KeyStoreException, java.security.KeyManagementException, org.apache.http.conn.HttpHostConnectException  {
+    //this makes a connection to the master, so if the connection fails, the given address is invalid
+    retrievePuppetMasterCACertificate(url);
+  }
+
+  public void setPuppetMasterUrl(String url) throws IOException, java.net.UnknownHostException,
+    java.security.NoSuchAlgorithmException, java.security.KeyStoreException, java.security.KeyManagementException, org.apache.http.conn.HttpHostConnectException  {
     this.puppetMasterUrl = url;
     this.puppetMasterCACertificate = retrievePuppetMasterCACertificate();
+    save();
   }
 
   public void setPuppetMasterCACertificate(String cert) {
@@ -42,29 +51,29 @@ public class PuppetEnterpriseConfig implements Serializable, Saveable {
     return this.puppetMasterCACertificate;
   }
 
-  private String retrievePuppetMasterCACertificate() throws java.net.UnknownHostException, IOException {
+  private String retrievePuppetMasterCACertificate() throws java.net.UnknownHostException, IOException,
+    java.security.NoSuchAlgorithmException, java.security.KeyStoreException, java.security.KeyManagementException, org.apache.http.conn.HttpHostConnectException {
+
+    return retrievePuppetMasterCACertificate(this.puppetMasterUrl);
+  }
+
+  private String retrievePuppetMasterCACertificate(String address) throws java.net.UnknownHostException, IOException,
+    java.security.NoSuchAlgorithmException, java.security.KeyStoreException, java.security.KeyManagementException, org.apache.http.conn.HttpHostConnectException {
     String returnString = "";
 
     SSLContextBuilder builder = new SSLContextBuilder();
 
-    try {
-      builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
+    builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
 
-      SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(builder.build());
-      CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
+    SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(builder.build());
+    CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
 
-      HttpGet httpGet = new HttpGet("https://" + puppetMasterUrl + ":8140/puppet-ca/v1/certificate/ca");
-      returnString = IOUtils.toString(httpclient.execute(httpGet).getEntity().getContent());
-    } catch(java.security.NoSuchAlgorithmException e) {
-      e.printStackTrace();
-    } catch(java.security.KeyStoreException e) {
-      e.printStackTrace();
-    } catch(java.security.KeyManagementException e) {
-      e.printStackTrace();
-    }
+    HttpGet httpGet = new HttpGet("https://" + address + ":8140/puppet-ca/v1/certificate/ca");
+    returnString = IOUtils.toString(httpclient.execute(httpGet).getEntity().getContent());
 
     return returnString;
   }
+
   public void loadGlobalConfig() {
     try {
       XmlFile xml = getConfigFile();
@@ -82,10 +91,10 @@ public class PuppetEnterpriseConfig implements Serializable, Saveable {
     } else {
       String puppetConfigPath = "/etc/puppetlabs/puppet/puppet.conf";
       File puppetFileHandler = new File(puppetConfigPath);
-      if (puppetFileHandler.exists()) {
-        String cmd = "/opt/puppetlabs/bin/puppet config print server --config /etc/puppetlabs/puppet/puppet.conf";
+      try {
+        if (puppetFileHandler.exists()) {
+          String cmd = "/opt/puppetlabs/bin/puppet config print server --config /etc/puppetlabs/puppet/puppet.conf";
 
-        try {
           Process p = Runtime.getRuntime().exec(cmd);
           p.waitFor();
           InputStreamReader is = new InputStreamReader(p.getInputStream());
@@ -96,25 +105,22 @@ public class PuppetEnterpriseConfig implements Serializable, Saveable {
 
           while ((line = br.readLine()) != null) { lines = lines + line; }
 
-          puppetMasterUrl = lines;
-          this.puppetMasterCACertificate = retrievePuppetMasterCACertificate();
-        } catch(IOException e) {
-          e.printStackTrace();
-        } catch(InterruptedException e) {
-          e.printStackTrace();
+          this.puppetMasterUrl = lines;
+        } else {
+          this.puppetMasterUrl = "https://puppet";
         }
-      } else {
-        puppetMasterUrl = "https://puppet";
-      }
 
-      try {
-        save();
-      } catch(IOException e) {
-        e.printStackTrace();
-      }
+        setPuppetMasterUrl(puppetMasterUrl);
+
+      //If we fail here, it's the same as not having a config
+      } catch(java.io.IOException e) {
+      } catch(java.security.NoSuchAlgorithmException e) {
+      } catch(java.security.KeyStoreException e) {
+      } catch(java.security.KeyManagementException e) {
+      } catch(InterruptedException e) {}
     }
 
-    return puppetMasterUrl;
+    return this.puppetMasterUrl;
   }
 
   public void save() throws IOException {
