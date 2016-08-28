@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.UUID;
 import java.io.FileInputStream;
 
+import com.google.inject.Inject;
+
 import javax.servlet.ServletException;
 import org.apache.commons.io.IOUtils;
 
@@ -20,7 +22,9 @@ import hudson.model.Hudson;
 import hudson.model.ManagementLink;
 import hudson.security.Permission;
 import hudson.util.FormValidation;
+import hudson.util.FormApply;
 import net.sf.json.JSONObject;
+import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.HttpRedirect;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.HttpResponses;
@@ -38,6 +42,10 @@ public class PuppetEnterpriseManagement extends ManagementLink {
 
   public PuppetEnterpriseManagement() {
     this.config = new PuppetEnterpriseConfig();
+  }
+
+  public String getFullURL(){
+    return Stapler.getCurrentRequest().getOriginalRequestURI().substring(1);
   }
 
   @Override
@@ -59,10 +67,10 @@ public class PuppetEnterpriseManagement extends ManagementLink {
     return config.getPuppetMasterUrl();
   }
 
-  public FormValidation doCheckMaster(@QueryParameter String value, @QueryParameter String masterUrl) throws IOException, ServletException {
+  public FormValidation doCheckMaster(@QueryParameter String master) throws IOException, ServletException {
     try {
-      config.validatePuppetMasterUrl(masterUrl);
-      return FormValidation.ok();
+      config.validatePuppetMasterUrl(master);
+      return FormValidation.ok("Succesfully Communicated with Puppet master.");
     } catch(java.net.UnknownHostException e) {
       return FormValidation.error("Unknown host");
     } catch(java.security.NoSuchAlgorithmException e) {
@@ -71,10 +79,12 @@ public class PuppetEnterpriseManagement extends ManagementLink {
       return FormValidation.error("Unable to negotiate SSL connection with host. " + e.getMessage());
     } catch(java.security.KeyManagementException e) {
       return FormValidation.error("Unable to negotiate SSL connection with host. " + e.getMessage());
+    } catch(org.apache.http.conn.HttpHostConnectException e) {
+      return FormValidation.error("Unable to reach host. Check pe-puppetserver process is running and no firewalls are blocking port 8140.");
     }
   }
 
-  public void doSaveConfig(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
+  public HttpResponse doSaveConfig(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
     try {
       JSONObject json = req.getSubmittedForm().getJSONObject("config");
 
@@ -83,7 +93,7 @@ public class PuppetEnterpriseManagement extends ManagementLink {
       throw new ServletException(e);
     }
 
-    rsp.sendRedirect(".");
+    return FormApply.success(".");
   }
 
   public String getIconUrl(String rootUrl) {

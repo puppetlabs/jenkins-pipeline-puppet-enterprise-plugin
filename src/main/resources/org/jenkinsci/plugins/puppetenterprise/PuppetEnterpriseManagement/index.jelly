@@ -13,8 +13,6 @@
         ${%Puppet Enterprise}
       </h1>
 
-      <j:out value="These are configurations provide default values for the Puppet Enterprise methods available for use in a Jenkinsfile to control Puppet Enterprise." />
-
       <div class="excerpt">
       <f:form method="post" name="config" action="saveConfig">
         <f:section title="${%Global Configurations}" name="config">
@@ -23,7 +21,8 @@
             <f:textbox field="master" id="config.puppetMasterUrl" name="config.puppetMasterUrl" value="${it.getMaster()}" default="puppet.example.com" />
           </f:entry>
           <f:block>
-            <f:submit value="${%Submit}" />
+            <f:validateButton method="${it.fullURL}checkMaster" with="master" progress="${%Connection...}" title="${%Test Connection}" />
+            <f:submit value="${%Save}" />
           </f:block>
         </f:section>
       </f:form>
