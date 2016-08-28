@@ -31,7 +31,21 @@ public class HieraConfig implements Serializable, Saveable {
       return null;
     }
 
-    return pathHierarchy.get(key);
+    HashMap keyData = (HashMap) pathHierarchy.get(key);
+
+    return keyData.get("value");
+  }
+
+  public String getKeySource(String path, String key) {
+    HashMap pathHierarchy = (HashMap) HieraConfig.hierarchy.get(path);
+
+    if (pathHierarchy == null) {
+      return null;
+    }
+
+    HashMap keyData = (HashMap) pathHierarchy.get(key);
+
+    return (String) keyData.get("source");
   }
 
   public Set<String> getPaths() {
@@ -43,14 +57,52 @@ public class HieraConfig implements Serializable, Saveable {
     return pathHierarchy.keySet();
   }
 
-  public void setKeyValue(String path, String key, Object value) {
+  public void deletePath(String path) {
+    if (hierarchy.get(path) == null) {
+      logger.log(Level.WARNING, "Attempted to delete non-existent hiera Scope " + path);
+    } else {
+      hierarchy.remove(path);
+
+      try {
+        save();
+      } catch(IOException e) {
+        logger.log(Level.SEVERE, "Error saving Hiera configuration: " + e.getMessage());
+      }
+    }
+  }
+
+  public void deleteKey(String key, String path) {
+    if (hierarchy.get(path) == null) {
+      logger.log(Level.WARNING, "Attempted to delete key '" + key + " from non-existent hiera Scope " + path);
+    } else {
+      HashMap pathHierarchy = (HashMap) hierarchy.get(path);
+
+      if (pathHierarchy.get(key) == null) {
+        logger.log(Level.WARNING, "Attempted to delete non-existent key '" + key + " from hiera Scope " + path);
+      } else {
+        pathHierarchy.remove(key);
+
+        try {
+          save();
+        } catch(IOException e) {
+          logger.log(Level.SEVERE, "Error saving Hiera configuration: " + e.getMessage());
+        }
+      }
+    }
+  }
+
+  public void setKeyValue(String path, String key, String source, Object value) {
     if (HieraConfig.hierarchy.get(path) == null) {
       HieraConfig.hierarchy.put(path, new HashMap());
     }
 
     HashMap pathHierarchy = (HashMap) HieraConfig.hierarchy.get(path);
 
-    pathHierarchy.put(key, value);
+    HashMap keyData = new HashMap();
+    keyData.put("source", source);
+    keyData.put("value", value);
+
+    pathHierarchy.put(key, keyData);
     HieraConfig.hierarchy.put(path, pathHierarchy);
 
     try {

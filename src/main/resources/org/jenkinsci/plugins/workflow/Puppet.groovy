@@ -75,21 +75,13 @@ class Puppet implements Serializable {
   public <V> V hiera(Map parameters = [:]) {
     String credentials
 
-    if (parameters.credentials) {
-      credentials = parameters.credentials
-    } else {
-      credentials = credentialsId
-    }
-
     assert parameters.path instanceof String
     assert parameters.key instanceof String
 
-    if(credentials == null) {
-      System.out "No Credentials Provided for puppet.run call"
-    }
-
     node {
-      script.puppetHiera(path: parameters.path, key: parameters.key, value: parameters.value)
+      def projectName = script.env.JOB_NAME
+
+      script.puppetHiera(path: parameters.path, key: parameters.key, source: projectName, value: parameters.value)
     }
   }
 

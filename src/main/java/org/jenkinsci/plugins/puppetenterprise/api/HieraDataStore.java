@@ -8,6 +8,7 @@ import hudson.model.RootAction;
 import hudson.Extension;
 import org.json.*;
 import javax.servlet.ServletException;
+import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 import org.jenkinsci.plugins.puppetenterprise.models.HieraConfig;
 
@@ -34,6 +35,21 @@ public class HieraDataStore implements RootAction {
   public String getKeyValue(String path, String key) {
     Object value = hiera.getKeyValue(path, key);
     return value.toString();
+  }
+
+  public String getKeySource(String path, String key) {
+    String source = hiera.getKeySource(path, key);
+    return source;
+  }
+
+  @JavaScriptMethod
+  public void deletePath(String path) {
+    hiera.deletePath(path);
+  }
+
+  @JavaScriptMethod
+  public void deleteKey(String key, String path) {
+    hiera.deleteKey(key, path);
   }
 
   @Override

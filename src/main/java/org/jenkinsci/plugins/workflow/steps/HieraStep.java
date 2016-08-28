@@ -48,6 +48,7 @@ public final class HieraStep extends AbstractStepImpl {
 
   private String path = "";
   private String key = "";
+  private String source = "";
   private Object value = null;
   private HieraConfig hiera = null;
 
@@ -63,6 +64,10 @@ public final class HieraStep extends AbstractStepImpl {
     this.value = value;
   }
 
+  @DataBoundSetter private void setSource(@Nonnull String source) {
+    this.source = source;
+  }
+
   public String getPath() {
     return this.path;
   }
@@ -75,13 +80,17 @@ public final class HieraStep extends AbstractStepImpl {
     return this.value;
   }
 
+  public String getSource() {
+    return this.source;
+  }
+
   @DataBoundConstructor public HieraStep() {
     hiera = new HieraConfig();
   }
 
   public void save() {
-    hiera.setKeyValue(this.path, this.key, this.value);
-    logger.log(Level.INFO, "Successfully saved key/value pair " + this.key + "/" + this.value + " to path " + this.path + ".");
+    hiera.setKeyValue(this.path, this.key, this.source, this.value);
+    logger.log(Level.INFO, "Successfully saved key/value pair " + this.key + "/" + this.value + " to path " + this.path + " from source " + this.source + ".");
   }
 
   public static class HieraStepExecution extends AbstractSynchronousStepExecution<Void> {
