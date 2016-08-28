@@ -9,7 +9,7 @@
     </parent>
     <groupId>org.jenkins-ci.plugins.workflow</groupId>
     <artifactId>workflow-puppet-enterprise</artifactId>
-    <version>0.1.0</version>
+    <version>1.0.0</version>
     <packaging>hpi</packaging>
     <name>Pipeline: Puppet Enterprise</name>
     <url>https://wiki.jenkins-ci.org/display/JENKINS/Pipeline+Puppet+Enterprise+Plugin</url>
