@@ -33,6 +33,7 @@ import org.jenkinsci.plugins.workflow.cps.GlobalVariable;
         "method groovy.lang.GroovyObject getProperty java.lang.String",
         "method java.lang.Class isInstance java.lang.Object",
         "method java.lang.Throwable getMessage",
+        "staticMethod java.lang.System getenv java.lang.String",
         "method groovy.lang.GroovyObject invokeMethod java.lang.String java.lang.Object"));
     }
   }

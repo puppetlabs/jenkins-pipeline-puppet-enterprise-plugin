@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+<j:new var="h" className="hudson.Functions" />
+
+  <l:layout norefresh="true" css="/plugin/workflow-puppet-enterprise/css/hiera.css">
+    <st:bind value="${it.deletePath}" var="backend"/>
+    <l:header>
+    </l:header>
+    <st:include page="sidepanel.jelly" />
+    <l:main-panel>
+      <script type="text/javascript" src="${rootURL}/plugin/workflow-puppet-enterprise/js/run_prettify.js?lang=yaml&amp;lan=groovy&amp;skin=sunburst"></script>
+      <script>
+        function confirmDeletePath(path) {
+          var pathDiv = document.getElementById(path);
+          var backend = <st:bind value="${it}"/>
+          backend.deletePath(path);
+          pathDiv.hide();
+        }
+
+        function cancelDeletePath(path) {
+          var pathDiv = document.getElementById(path);
+          var pathRemoveButton = document.getElementById(path + "-remove-button");
+          var pathConfirmButton = document.getElementById(path + "-confirm-button");
+          var pathCancelButton = document.getElementById(path + "-cancel-button");
+
+          pathDiv.style.backgroundColor = 'inherit';
+          pathDiv.style.textDecoration = 'inherit';
+          pathRemoveButton.show();
+          pathConfirmButton.hide();
+          pathCancelButton.hide();
+        }
+
+        function deletePath(path) {
+          var pathDiv = document.getElementById(path);
+          var pathRemoveButton = document.getElementById(path + "-remove-button");
+          var pathConfirmButton = document.getElementById(path + "-confirm-button");
+          var pathCancelButton = document.getElementById(path + "-cancel-button");
+
+          console.log(path + "-remove-button");
+          pathDiv.style.backgroundColor = '#fbc1c1';
+
+          pathRemoveButton.hide();
+          pathConfirmButton.style.display = "inline";
+          pathConfirmButton.style.color = "red";
+          pathCancelButton.style.display = "inline";
+        }
+
+        function confirmDeleteKey(key, path) {
+          var pathKey = document.getElementById(path + "-" + key);
+          var backend = <st:bind value="${it}"/>
+          backend.deleteKey(key, path);
+          pathKey.hide();
+        }
+
+        function cancelDeleteKey(key, path) {
+          var pathKey = document.getElementById(path + "-" + key);
+          var pathKeyRemoveButton = document.getElementById(path + "-" + key + "-remove-button");
+          var pathKeyConfirmButton = document.getElementById(path + "-" + key + "-confirm-button");
+          var pathKeyCancelButton = document.getElementById(path + "-" + key + "-cancel-button");
+
+          pathKey.style.backgroundColor = 'inherit';
+          pathKey.style.textDecoration = 'inherit';
+          pathKeyRemoveButton.show();
+          pathKeyConfirmButton.hide();
+          pathKeyCancelButton.hide();
+        }
+
+        function deleteKey(key, path) {
+          var pathKey = document.getElementById(path + "-" + key);
+          var pathKeyRemoveButton = document.getElementById(path + "-" + key + "-remove-button");
+          var pathKeyConfirmButton = document.getElementById(path + "-" + key + "-confirm-button");
+          var pathKeyCancelButton = document.getElementById(path + "-" + key + "-cancel-button");
+
+          pathKey.style.backgroundColor = '#fbc1c1';
+
+          pathKeyRemoveButton.hide();
+          pathKeyConfirmButton.style.display = "inline";
+          pathKeyCancelButton.style.display = "inline";
+          pathKeyConfirmButton.style.color = "red";
+        }
+      </script>
+
+      <h1>Hiera data store</h1>
+      <p>This page shows the key/value pairs stored for each defined scope.
+
+      <h1>Scopes</h1>
+      <br/><br/>
+
+      <f:repeatable name="scopes" noAddButton="true" items="${it.getPaths()}" var="path">
+        <div id="${path}" class="scope-container">
+          <table>
+            <tr>
+              <td class="scope-name">${path}</td>
+              <td class="scope-delete">
+                <button id="${path}-remove-button" onclick="deletePath('${path}')" class="danger delete delete-scope">Remove Scope</button>
+                <button id="${path}-confirm-button" onclick="confirmDeletePath('${path}')" class="danger delete delete-confirm">Confirm Delete</button>
+                <button id="${path}-cancel-button" onclick="cancelDeletePath('${path}')" class="danger delete delete-cancel">Cancel</button>
+              </td>
+            </tr>
+          </table>
+
+          <table class="scope-table table table-hover list-table">
+            <thead>
+              <tr>
+                <th>Key</th>
+                <th>Value</th>
+                <th>Source Job</th>
+                <th/>
+              </tr>
+            </thead>
+            <tbody>
+              <f:repeatable noAddButton="true" items="${it.getKeys(path)}" var="key">
+                <tr id="${path}-${key}">
+                  <td>
+                    <strong>${key}</strong>
+                  </td>
+                  <td class="middle-cell">
+                    ${it.getKeyValue(path, key)}
+                  </td>
+                  <td class="middle-cell">
+                    ${it.getKeySource(path, key)}
+                  </td>
+                  <td class="key-pair-delete">
+                    <button id="${path}-${key}-remove-button" onclick="deleteKey('${key}','${path}')" class="delete delete-key">Remove</button>
+                    <button id="${path}-${key}-confirm-button" onclick="confirmDeleteKey('${key}','${path}')" class="delete delete-confirm">Confirm Delete</button>
+                    <button id="${path}-${key}-cancel-button" onclick="cancelDeleteKey('${key}','${path}')" class="delete delete-cancel">Cancel</button>
+                  </td>
+                </tr>
+              </f:repeatable>
+            </tbody>
+          </table>
+        </div>
+      </f:repeatable>
+
+      <h1>How to use this plugin</h1>
+
+      To define new scopes and key/value pairs, use the `puppet.hiera` in your pipeline groovy scripts.  For example:</p>
+      <div class="codeblock">
+      <pre class="prettyprint"><![CDATA[puppet.hiera path: 'development', key: 'build-version', value: 'v1.0.1']]></pre>
+      </div>
+      <p>Using the hiera-http backend, you can specify an order to query scopes defined in Jenkins for
+      a matching key. If the key is not found in the first scope, it will query the next until it has
+      exhausted the list of scopes to query.</p>
+
+      <p>Here is an example hiera-http configuration that should be placed in the hiera.conf on the Puppet server. In this example, whenever a
+      node makes a request for a key during catalog compilation, it will first look for the key in a scope
+      that matches its certname, then look for the key in the scope that matches the node's virtualization
+      platform, and finally look in a scope that matches the node's environment.</p>
+
+      <div class="codeblock">
+      <pre class="prettyprint"> <![CDATA[
+:backends:
+  - http
+  - yaml
+
+:http:
+  :host: ${request.getServerName()}
+  :port: ${request.getLocalPort()}
+  :output: json
+  :cache_timeout: 10
+  :failure: graceful
+  :paths:
+    - "${rootURL}/hiera/lookup?path=%{::trusted.certname}&key=%{key}"
+    - "${rootURL}/hiera/lookup?path=%{::virtual}&key=%{key}"
+    - "${rootURL}/hiera/lookup?path=%{::environment}&key=%{key}"
+      ]]>
+      </pre>
+      </div>
+      <script>
+      function cfp_confirmDelete(name) {
+        if (confirm("Sure you want to delete ["+name+"]?")) {
+          return true;
+        }else{
+          return false;
+        }
+      }
+      </script>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

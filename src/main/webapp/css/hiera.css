@@ -1,0 +1,130 @@
+.scope-name {
+  font-size: 2em;
+}
+
+.scope-delete{
+  text-align: right;
+  padding-top: 25px;
+}
+
+div[name$=scopes] {
+  padding-top: 30px;
+}
+
+.scope-table tbody tr:first-child {
+  display: none; /*I have no idea why this is necessary*/
+}
+
+.repeated-chunk:nth-of-type(even) {
+  background: white;
+}
+
+.repeated-container {
+  width: 922px;
+}
+
+.codeblock {
+  width: 900px;
+}
+
+.list-table th:first-child {
+    border-left-width: 0px;
+    border-top-left-radius: 4px;
+}
+
+.list-table th:last-child {
+    border-left-width: 0px;
+    border-top-right-radius: 4px;
+}
+
+.list-table td:last-child {
+  text-align: right;
+  border-left: 1px solid #e5e5e5;
+}
+
+.list-table td:first-child {
+  border-right: 1px solid #e5e5e5;
+}
+
+.middle-cell {
+  border-left: 1px solid #e5e5e5;
+  border-right: 1px solid #e5e5e5;
+}
+
+.list-table td {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.list-table {
+    table-layout: fixed;
+    margin-bottom: 0px;
+}
+
+table th {
+    padding: 10px;
+    color: rgb(229, 229, 229);
+    background-color: rgb(68, 68, 68);
+    text-align: left;
+    vertical-align: top;
+    border-color: rgb(61, 61, 61) rgb(61, 61, 61) rgb(61, 61, 61);
+    border-top: 0px;
+}
+
+table td {
+  padding: 10px;
+}
+
+button.delete-confirm {
+  display: none;
+  color: #f33232;
+}
+
+button.delete-cancel {
+  display: none;
+  color: 'green';
+}
+
+button.delete:before, button[class$=delete]:before, i.cm-data-filter-remove-icon:before {
+  display: inline-block;
+  padding-right: 4px;
+  text-decoration: none;
+  content: "✖";
+}
+
+button.danger {
+  color: #f33232;
+}
+
+button.delete {
+  color: #159680;
+  background-color: transparent;
+  padding: 3px 10px;
+  border: 0;
+  font-size: 12px;
+  text-decoration: underline;
+  -webkit-appearance: button;
+  cursor: pointer;
+}
+
+table {
+    padding: 10px;
+    text-align: left;
+    display: table;
+    color: rgb(102, 102, 102);
+    width: 100%;
+    max-width: 100%;
+    border-collapse: collapse;
+    border-image-source: initial;
+    border-image-slice: initial;
+    border-image-width: initial;
+    border-image-outset: initial;
+    border-image-repeat: initial;
+    border-spacing: 0px;
+    border-width: 0px;
+    border-style: initial;
+    border-color: initial;
+}
+
+p {
+  width: 900px;
+}

@@ -72,6 +72,19 @@ class Puppet implements Serializable {
     }
   }
 
+  public <V> V hiera(Map parameters = [:]) {
+    String credentials
+
+    assert parameters.path instanceof String
+    assert parameters.key instanceof String
+
+    node {
+      def projectName = script.env.JOB_NAME
+
+      script.puppetHiera(path: parameters.path, key: parameters.key, source: projectName, value: parameters.value)
+    }
+  }
+
   private <V> V node(Closure<V> body) {
     if (script.env.NODE_NAME != null) {
         // Already inside a node block.
