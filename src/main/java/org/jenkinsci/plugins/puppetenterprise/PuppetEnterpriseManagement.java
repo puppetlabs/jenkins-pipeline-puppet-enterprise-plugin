@@ -67,20 +67,22 @@ public class PuppetEnterpriseManagement extends ManagementLink {
     return config.getPuppetMasterUrl();
   }
 
-  public FormValidation doCheckMaster(@QueryParameter String master) throws IOException, ServletException {
+  public FormValidation doCheckMaster(@QueryParameter String masterAddress) throws IOException, ServletException {
     try {
-      config.validatePuppetMasterUrl(master);
+      config.validatePuppetMasterUrl(masterAddress);
       return FormValidation.ok("Succesfully Communicated with Puppet master.");
     } catch(java.net.UnknownHostException e) {
       return FormValidation.error("Unknown host");
     } catch(java.security.NoSuchAlgorithmException e) {
-      return FormValidation.error("Unable to negotiate SSL connection with host. " + e.getMessage());
+      return FormValidation.error(e.getMessage());
     } catch(java.security.KeyStoreException e) {
-      return FormValidation.error("Unable to negotiate SSL connection with host. " + e.getMessage());
+      return FormValidation.error(e.getMessage());
     } catch(java.security.KeyManagementException e) {
-      return FormValidation.error("Unable to negotiate SSL connection with host. " + e.getMessage());
+      return FormValidation.error(e.getMessage());
     } catch(org.apache.http.conn.HttpHostConnectException e) {
       return FormValidation.error("Unable to reach host. Check pe-puppetserver process is running and no firewalls are blocking port 8140.");
+    } catch(javax.net.ssl.SSLPeerUnverifiedException e) {
+      return FormValidation.error("SSL verification failed. Certificate name does not match provided host name.");
     }
   }
 
@@ -88,7 +90,7 @@ public class PuppetEnterpriseManagement extends ManagementLink {
     try {
       JSONObject json = req.getSubmittedForm().getJSONObject("config");
 
-      config.setPuppetMasterUrl(json.getString("puppetMasterUrl"));
+      config.setPuppetMasterUrl(json.getString("masterAddress"));
     } catch(Exception e) {
       throw new ServletException(e);
     }

@@ -18,10 +18,10 @@
         <f:section title="${%Global Configurations}" name="config">
           <input type="hidden" name="stapler-class" value="${config.class.name}" />
           <f:entry title="${%Puppet Master Address}" >
-            <f:textbox field="master" id="config.puppetMasterUrl" name="config.puppetMasterUrl" value="${it.getMaster()}" default="puppet.example.com" />
+            <f:textbox field="masterAddress" value="${it.getMaster()}" default="puppet.example.com" />
           </f:entry>
           <f:block>
-            <f:validateButton method="${it.fullURL}checkMaster" with="master" progress="${%Connection...}" title="${%Test Connection}" />
+            <f:validateButton method="${it.fullURL}checkMaster" with="masterAddress" progress="${%Testing Connection...}" title="${%Test Connection}" />
             <f:submit value="${%Save}" />
           </f:block>
         </f:section>
