@@ -88,6 +88,11 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
     super.loadConfig();
   }
 
+  private static String parseJobId(String idUrl) {
+    String[] jobUrlElements = idUrl.split("/");
+    return jobUrlElements[jobUrlElements.length - 1];
+  }
+
   public static class PuppetJobStepExecution extends AbstractSynchronousStepExecution<Void> {
 
     @Inject private transient PuppetJobStep step;
@@ -129,23 +134,22 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
           error = "Environment " + step.getEnvironment() + " not found";
         }
 
+        logger.log(Level.SEVERE, error);
         throw new PEException(error, result.getResponseCode());
       }
 
       HashMap job = new HashMap();
       String jobID = "";
       String jobStatus = "";
-      String[] jobUrlElements = jobID.split("/");
 
       try {
         job = (HashMap) responseHash.get("job");
         jobID = (String) job.get("id");
         jobStatus = "";
 
-        jobUrlElements = jobID.split("/");
 
-        listener.getLogger().println("Successfully created Puppet job " + jobUrlElements[jobUrlElements.length - 1]);
-        logger.log(Level.INFO, "Successfully created Puppet job " + jobUrlElements[jobUrlElements.length - 1]);
+        listener.getLogger().println("Successfully created Puppet job " + parseJobId(jobID));
+        logger.log(Level.INFO, "Successfully created Puppet job " + parseJobId(jobID));
       } catch(NullPointerException e){
         throw new PEException(responseHash.toString(), 200);
       }
@@ -170,6 +174,7 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
         HashMap jobStatusResponseHash = (HashMap) jobStatusResponse.getResponseBody();
 
         if (!step.isSuccessful(jobStatusResponse)) {
+          listener.getLogger().println("Successfully created Puppet job " + parseJobId(jobID));
           throw new PEException(jobStatusResponseHash.toString(), jobStatusResponse.getResponseCode());
         }
 
@@ -187,9 +192,9 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
       } while (!jobStatus.equals("finished") && !jobStatus.equals("stopped") && !jobStatus.equals("failed"));
 
       if (jobStatus.equals("failed") || jobStatus.equals("stopped")) {
-        throw new PEException("Job " + jobID + " " + jobStatus, listener);
+        throw new PEException("Job " + parseJobId(jobID) + " " + jobStatus, listener);
       } else {
-        listener.getLogger().println("Successfully ran Puppet job " + jobUrlElements[jobUrlElements.length - 1]);
+        listener.getLogger().println("Successfully ran Puppet job " + parseJobId(jobID));
       }
 
       return null;
