@@ -46,14 +46,14 @@ public final class HieraStep extends AbstractStepImpl {
 
   private static final Logger logger = Logger.getLogger(HieraStep.class.getName());
 
-  private String path = "";
+  private String scope = "";
   private String key = "";
   private String source = "";
   private Object value = null;
   private HieraConfig hiera = null;
 
-  @DataBoundSetter private void setPath(String path) {
-    this.path = Util.fixEmpty(path);
+  @DataBoundSetter private void setScope(String scope) {
+    this.scope = Util.fixEmpty(scope);
   }
 
   @DataBoundSetter private void setKey(@Nonnull String key) {
@@ -68,8 +68,8 @@ public final class HieraStep extends AbstractStepImpl {
     this.source = source;
   }
 
-  public String getPath() {
-    return this.path;
+  public String getSceop() {
+    return this.scope;
   }
 
   public String getKey() {
@@ -89,8 +89,8 @@ public final class HieraStep extends AbstractStepImpl {
   }
 
   public void save() {
-    hiera.setKeyValue(this.path, this.key, this.source, this.value);
-    logger.log(Level.INFO, "Successfully saved key/value pair " + this.key + "/" + this.value + " to path " + this.path + " from source " + this.source + ".");
+    hiera.setKeyValue(this.scope, this.key, this.source, this.value);
+    logger.log(Level.INFO, "Successfully saved key/value pair " + this.key + "/" + this.value + " to scope " + this.scope + " from source " + this.source + ".");
   }
 
   public static class HieraStepExecution extends AbstractSynchronousStepExecution<Void> {

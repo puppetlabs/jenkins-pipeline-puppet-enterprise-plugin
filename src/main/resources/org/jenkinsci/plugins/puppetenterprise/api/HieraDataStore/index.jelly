@@ -4,80 +4,80 @@
 <j:new var="h" className="hudson.Functions" />
 
   <l:layout norefresh="true" css="/plugin/workflow-puppet-enterprise/css/hiera.css">
-    <st:bind value="${it.deletePath}" var="backend"/>
+    <st:bind value="${it.deleteScope}" var="backend"/>
     <l:header>
     </l:header>
     <st:include page="sidepanel.jelly" />
     <l:main-panel>
       <script type="text/javascript" src="${rootURL}/plugin/workflow-puppet-enterprise/js/run_prettify.js?lang=yaml&amp;lan=groovy&amp;skin=sunburst"></script>
       <script>
-        function confirmDeletePath(path) {
-          var pathDiv = document.getElementById(path);
+        function confirmDeleteScope(scope) {
+          var scopeDiv = document.getElementById(scope);
           var backend = <st:bind value="${it}"/>
-          backend.deletePath(path);
-          pathDiv.hide();
+          backend.deleteScope(scope);
+          scopeDiv.hide();
         }
 
-        function cancelDeletePath(path) {
-          var pathDiv = document.getElementById(path);
-          var pathRemoveButton = document.getElementById(path + "-remove-button");
-          var pathConfirmButton = document.getElementById(path + "-confirm-button");
-          var pathCancelButton = document.getElementById(path + "-cancel-button");
+        function cancelDeleteScope(scope) {
+          var scopeDiv = document.getElementById(scope);
+          var scopeRemoveButton = document.getElementById(scope + "-remove-button");
+          var scopeConfirmButton = document.getElementById(scope + "-confirm-button");
+          var scopeCancelButton = document.getElementById(scope + "-cancel-button");
 
-          pathDiv.style.backgroundColor = 'inherit';
-          pathDiv.style.textDecoration = 'inherit';
-          pathRemoveButton.show();
-          pathConfirmButton.hide();
-          pathCancelButton.hide();
+          scopeDiv.style.backgroundColor = 'inherit';
+          scopeDiv.style.textDecoration = 'inherit';
+          scopeRemoveButton.show();
+          scopeConfirmButton.hide();
+          scopeCancelButton.hide();
         }
 
-        function deletePath(path) {
-          var pathDiv = document.getElementById(path);
-          var pathRemoveButton = document.getElementById(path + "-remove-button");
-          var pathConfirmButton = document.getElementById(path + "-confirm-button");
-          var pathCancelButton = document.getElementById(path + "-cancel-button");
+        function deleteScope(scope) {
+          var scopeDiv = document.getElementById(scope);
+          var scopeRemoveButton = document.getElementById(scope + "-remove-button");
+          var scopeConfirmButton = document.getElementById(scope + "-confirm-button");
+          var scopeCancelButton = document.getElementById(scope + "-cancel-button");
 
-          console.log(path + "-remove-button");
-          pathDiv.style.backgroundColor = '#fbc1c1';
+          console.log(scope + "-remove-button");
+          scopeDiv.style.backgroundColor = '#fbc1c1';
 
-          pathRemoveButton.hide();
-          pathConfirmButton.style.display = "inline";
-          pathConfirmButton.style.color = "red";
-          pathCancelButton.style.display = "inline";
+          scopeRemoveButton.hide();
+          scopeConfirmButton.style.display = "inline";
+          scopeConfirmButton.style.color = "red";
+          scopeCancelButton.style.display = "inline";
         }
 
-        function confirmDeleteKey(key, path) {
-          var pathKey = document.getElementById(path + "-" + key);
+        function confirmDeleteKey(key, scope) {
+          var scopeKey = document.getElementById(scope + "-" + key);
           var backend = <st:bind value="${it}"/>
-          backend.deleteKey(key, path);
-          pathKey.hide();
+          backend.deleteKey(key, scope);
+          scopeKey.hide();
         }
 
-        function cancelDeleteKey(key, path) {
-          var pathKey = document.getElementById(path + "-" + key);
-          var pathKeyRemoveButton = document.getElementById(path + "-" + key + "-remove-button");
-          var pathKeyConfirmButton = document.getElementById(path + "-" + key + "-confirm-button");
-          var pathKeyCancelButton = document.getElementById(path + "-" + key + "-cancel-button");
+        function cancelDeleteKey(key, scope) {
+          var scopeKey = document.getElementById(scope + "-" + key);
+          var scopeKeyRemoveButton = document.getElementById(scope + "-" + key + "-remove-button");
+          var scopeKeyConfirmButton = document.getElementById(scope + "-" + key + "-confirm-button");
+          var scopeKeyCancelButton = document.getElementById(scope + "-" + key + "-cancel-button");
 
-          pathKey.style.backgroundColor = 'inherit';
-          pathKey.style.textDecoration = 'inherit';
-          pathKeyRemoveButton.show();
-          pathKeyConfirmButton.hide();
-          pathKeyCancelButton.hide();
+          scopeKey.style.backgroundColor = 'inherit';
+          scopeKey.style.textDecoration = 'inherit';
+          scopeKeyRemoveButton.show();
+          scopeKeyConfirmButton.hide();
+          scopeKeyCancelButton.hide();
         }
 
-        function deleteKey(key, path) {
-          var pathKey = document.getElementById(path + "-" + key);
-          var pathKeyRemoveButton = document.getElementById(path + "-" + key + "-remove-button");
-          var pathKeyConfirmButton = document.getElementById(path + "-" + key + "-confirm-button");
-          var pathKeyCancelButton = document.getElementById(path + "-" + key + "-cancel-button");
+        function deleteKey(key, scope) {
+          var scopeKey = document.getElementById(scope + "-" + key);
+          var scopeKeyRemoveButton = document.getElementById(scope + "-" + key + "-remove-button");
+          var scopeKeyConfirmButton = document.getElementById(scope + "-" + key + "-confirm-button");
+          var scopeKeyCancelButton = document.getElementById(scope + "-" + key + "-cancel-button");
 
-          pathKey.style.backgroundColor = '#fbc1c1';
+          scopeKey.style.backgroundColor = '#fbc1c1';
 
-          pathKeyRemoveButton.hide();
-          pathKeyConfirmButton.style.display = "inline";
-          pathKeyCancelButton.style.display = "inline";
-          pathKeyConfirmButton.style.color = "red";
+          scopeKeyRemoveButton.hide();
+          scopeKeyConfirmButton.style.display = "inline";
+          scopeKeyCancelButton.style.display = "inline";
+          scopeKeyConfirmButton.style.color = "red";
         }
       </script>
 
@@ -87,15 +87,15 @@
       <h1>Scopes</h1>
       <br/><br/>
 
-      <f:repeatable name="scopes" noAddButton="true" items="${it.getPaths()}" var="path">
-        <div id="${path}" class="scope-container">
+      <f:repeatable name="scopes" noAddButton="true" items="${it.getScopes()}" var="scope">
+        <div id="${scope}" class="scope-container">
           <table>
             <tr>
-              <td class="scope-name">${path}</td>
+              <td class="scope-name">${scope}</td>
               <td class="scope-delete">
-                <button id="${path}-remove-button" onclick="deletePath('${path}')" class="danger delete delete-scope">Remove Scope</button>
-                <button id="${path}-confirm-button" onclick="confirmDeletePath('${path}')" class="danger delete delete-confirm">Confirm Delete</button>
-                <button id="${path}-cancel-button" onclick="cancelDeletePath('${path}')" class="danger delete delete-cancel">Cancel</button>
+                <button id="${scope}-remove-button" onclick="deleteScope('${scope}')" class="danger delete delete-scope">Remove Scope</button>
+                <button id="${scope}-confirm-button" onclick="confirmDeleteScope('${scope}')" class="danger delete delete-confirm">Confirm Delete</button>
+                <button id="${scope}-cancel-button" onclick="cancelDeleteScope('${scope}')" class="danger delete delete-cancel">Cancel</button>
               </td>
             </tr>
           </table>
@@ -110,21 +110,21 @@
               </tr>
             </thead>
             <tbody>
-              <f:repeatable noAddButton="true" items="${it.getKeys(path)}" var="key">
-                <tr id="${path}-${key}">
+              <f:repeatable noAddButton="true" items="${it.getKeys(scope)}" var="key">
+                <tr id="${scope}-${key}">
                   <td>
                     <strong>${key}</strong>
                   </td>
                   <td class="middle-cell">
-                    ${it.getKeyValue(path, key)}
+                    ${it.getKeyValue(scope, key)}
                   </td>
                   <td class="middle-cell">
-                    ${it.getKeySource(path, key)}
+                    ${it.getKeySource(scope, key)}
                   </td>
                   <td class="key-pair-delete">
-                    <button id="${path}-${key}-remove-button" onclick="deleteKey('${key}','${path}')" class="delete delete-key">Remove</button>
-                    <button id="${path}-${key}-confirm-button" onclick="confirmDeleteKey('${key}','${path}')" class="delete delete-confirm">Confirm Delete</button>
-                    <button id="${path}-${key}-cancel-button" onclick="cancelDeleteKey('${key}','${path}')" class="delete delete-cancel">Cancel</button>
+                    <button id="${scope}-${key}-remove-button" onclick="deleteKey('${key}','${scope}')" class="delete delete-key">Remove</button>
+                    <button id="${scope}-${key}-confirm-button" onclick="confirmDeleteKey('${key}','${scope}')" class="delete delete-confirm">Confirm Delete</button>
+                    <button id="${scope}-${key}-cancel-button" onclick="cancelDeleteKey('${key}','${scope}')" class="delete delete-cancel">Cancel</button>
                   </td>
                 </tr>
               </f:repeatable>
@@ -137,7 +137,7 @@
 
       To define new scopes and key/value pairs, use the `puppet.hiera` in your pipeline groovy scripts.  For example:</p>
       <div class="codeblock">
-      <pre class="prettyprint"><![CDATA[puppet.hiera path: 'development', key: 'build-version', value: 'v1.0.1']]></pre>
+      <pre class="prettyprint"><![CDATA[puppet.hiera scope: 'development', key: 'build-version', value: 'v1.0.1']]></pre>
       </div>
       <p>Using the hiera-http backend, you can specify an order to query scopes defined in Jenkins for
       a matching key. If the key is not found in the first scope, it will query the next until it has
@@ -160,10 +160,10 @@
   :output: json
   :cache_timeout: 10
   :failure: graceful
-  :paths:
-    - "${rootURL}/hiera/lookup?path=%{::trusted.certname}&key=%{key}"
-    - "${rootURL}/hiera/lookup?path=%{::virtual}&key=%{key}"
-    - "${rootURL}/hiera/lookup?path=%{::environment}&key=%{key}"
+  :scopes:
+    - "${rootURL}/hiera/lookup?scope=%{::trusted.certname}&key=%{key}"
+    - "${rootURL}/hiera/lookup?scope=%{::virtual}&key=%{key}"
+    - "${rootURL}/hiera/lookup?scope=%{::environment}&key=%{key}"
       ]]>
       </pre>
       </div>

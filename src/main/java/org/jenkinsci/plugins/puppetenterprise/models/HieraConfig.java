@@ -24,44 +24,44 @@ public class HieraConfig implements Serializable, Saveable {
     loadGlobalConfig();
   }
 
-  public Object getKeyValue(String path, String key) {
-    HashMap pathHierarchy = (HashMap) HieraConfig.hierarchy.get(path);
+  public Object getKeyValue(String scope, String key) {
+    HashMap scopeHierarchy = (HashMap) HieraConfig.hierarchy.get(scope);
 
-    if (pathHierarchy == null) {
+    if (scopeHierarchy == null) {
       return null;
     }
 
-    HashMap keyData = (HashMap) pathHierarchy.get(key);
+    HashMap keyData = (HashMap) scopeHierarchy.get(key);
 
     return keyData.get("value");
   }
 
-  public String getKeySource(String path, String key) {
-    HashMap pathHierarchy = (HashMap) HieraConfig.hierarchy.get(path);
+  public String getKeySource(String scope, String key) {
+    HashMap scopeHierarchy = (HashMap) HieraConfig.hierarchy.get(scope);
 
-    if (pathHierarchy == null) {
+    if (scopeHierarchy == null) {
       return null;
     }
 
-    HashMap keyData = (HashMap) pathHierarchy.get(key);
+    HashMap keyData = (HashMap) scopeHierarchy.get(key);
 
     return (String) keyData.get("source");
   }
 
-  public Set<String> getPaths() {
+  public Set<String> getScopes() {
     return hierarchy.keySet();
   }
 
-  public Set<String> getKeys(String path) {
-    HashMap pathHierarchy = (HashMap) hierarchy.get(path);
-    return pathHierarchy.keySet();
+  public Set<String> getKeys(String scope) {
+    HashMap scopeHierarchy = (HashMap) hierarchy.get(scope);
+    return scopeHierarchy.keySet();
   }
 
-  public void deletePath(String path) {
-    if (hierarchy.get(path) == null) {
-      logger.log(Level.WARNING, "Attempted to delete non-existent hiera Scope " + path);
+  public void deleteScope(String scope) {
+    if (hierarchy.get(scope) == null) {
+      logger.log(Level.WARNING, "Attempted to delete non-existent hiera Scope " + scope);
     } else {
-      hierarchy.remove(path);
+      hierarchy.remove(scope);
 
       try {
         save();
@@ -71,16 +71,16 @@ public class HieraConfig implements Serializable, Saveable {
     }
   }
 
-  public void deleteKey(String key, String path) {
-    if (hierarchy.get(path) == null) {
-      logger.log(Level.WARNING, "Attempted to delete key '" + key + " from non-existent hiera Scope " + path);
+  public void deleteKey(String key, String scope) {
+    if (hierarchy.get(scope) == null) {
+      logger.log(Level.WARNING, "Attempted to delete key '" + key + " from non-existent hiera Scope " + scope);
     } else {
-      HashMap pathHierarchy = (HashMap) hierarchy.get(path);
+      HashMap scopeHierarchy = (HashMap) hierarchy.get(scope);
 
-      if (pathHierarchy.get(key) == null) {
-        logger.log(Level.WARNING, "Attempted to delete non-existent key '" + key + " from hiera Scope " + path);
+      if (scopeHierarchy.get(key) == null) {
+        logger.log(Level.WARNING, "Attempted to delete non-existent key '" + key + " from hiera Scope " + scope);
       } else {
-        pathHierarchy.remove(key);
+        scopeHierarchy.remove(key);
 
         try {
           save();
@@ -91,19 +91,19 @@ public class HieraConfig implements Serializable, Saveable {
     }
   }
 
-  public void setKeyValue(String path, String key, String source, Object value) {
-    if (HieraConfig.hierarchy.get(path) == null) {
-      HieraConfig.hierarchy.put(path, new HashMap());
+  public void setKeyValue(String scope, String key, String source, Object value) {
+    if (HieraConfig.hierarchy.get(scope) == null) {
+      HieraConfig.hierarchy.put(scope, new HashMap());
     }
 
-    HashMap pathHierarchy = (HashMap) HieraConfig.hierarchy.get(path);
+    HashMap scopeHierarchy = (HashMap) HieraConfig.hierarchy.get(scope);
 
     HashMap keyData = new HashMap();
     keyData.put("source", source);
     keyData.put("value", value);
 
-    pathHierarchy.put(key, keyData);
-    HieraConfig.hierarchy.put(path, pathHierarchy);
+    scopeHierarchy.put(key, keyData);
+    HieraConfig.hierarchy.put(scope, scopeHierarchy);
 
     try {
       save();

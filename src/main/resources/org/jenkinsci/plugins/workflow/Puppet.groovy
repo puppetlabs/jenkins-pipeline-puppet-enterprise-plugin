@@ -75,13 +75,13 @@ class Puppet implements Serializable {
   public <V> V hiera(Map parameters = [:]) {
     String credentials
 
-    assert parameters.path instanceof String
+    assert parameters.scope instanceof String
     assert parameters.key instanceof String
 
     node {
       def projectName = script.env.JOB_NAME
 
-      script.puppetHiera(path: parameters.path, key: parameters.key, source: projectName, value: parameters.value)
+      script.puppetHiera(scope: parameters.scope, key: parameters.key, source: projectName, value: parameters.value)
     }
   }
 

@@ -22,34 +22,34 @@ public class HieraDataStore implements RootAction {
     hiera = new HieraConfig();
   }
 
-  public String[] getPaths() {
-    Set<String> pathSet = hiera.getPaths();
-    return pathSet.toArray(new String[pathSet.size()]);
+  public String[] getScopes() {
+    Set<String> scopeSet = hiera.getScopes();
+    return scopeSet.toArray(new String[scopeSet.size()]);
   }
 
-  public String[] getKeys(String path) {
-    Set<String> keySet = hiera.getKeys(path);
+  public String[] getKeys(String scope) {
+    Set<String> keySet = hiera.getKeys(scope);
     return keySet.toArray(new String[keySet.size()]);
   }
 
-  public String getKeyValue(String path, String key) {
-    Object value = hiera.getKeyValue(path, key);
+  public String getKeyValue(String scope, String key) {
+    Object value = hiera.getKeyValue(scope, key);
     return value.toString();
   }
 
-  public String getKeySource(String path, String key) {
-    String source = hiera.getKeySource(path, key);
+  public String getKeySource(String scope, String key) {
+    String source = hiera.getKeySource(scope, key);
     return source;
   }
 
   @JavaScriptMethod
-  public void deletePath(String path) {
-    hiera.deletePath(path);
+  public void deleteScope(String scope) {
+    hiera.deleteScope(scope);
   }
 
   @JavaScriptMethod
-  public void deleteKey(String key, String path) {
-    hiera.deleteKey(key, path);
+  public void deleteKey(String key, String scope) {
+    hiera.deleteKey(key, scope);
   }
 
   @Override
@@ -74,12 +74,12 @@ public class HieraDataStore implements RootAction {
     parameters = req.getParameterMap();
 
     String returnValue = "";
-    String pathArr[] = (String[]) parameters.get("path");
-    String path = pathArr[0];
+    String scopeArr[] = (String[]) parameters.get("scope");
+    String scope = scopeArr[0];
     String keyArr[] = (String[]) parameters.get("key");
     String key = keyArr[0];
 
-    Object value = hiera.getKeyValue(path, key);
+    Object value = hiera.getKeyValue(scope, key);
 
     if (value == null) {
       rsp.setStatus(404);
