@@ -48,6 +48,9 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
   private static final Logger logger = Logger.getLogger(PuppetJobStep.class.getName());
 
   private String target = "";
+  private ArrayList nodes = new ArrayList();
+  private String application = "";
+  private String query = "";
   private Integer concurrency = null;
   private Boolean noop = false;
   private String environment = null;
@@ -66,6 +69,30 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
 
   @DataBoundSetter private void setEnvironment(String environment) {
     this.environment = environment;
+  }
+
+  @DataBoundSetter private void setQuery(String query) {
+    this.query = query;
+  }
+
+  @DataBoundSetter private void setNodes(ArrayList nodes) {
+    this.nodes = nodes;
+  }
+
+  @DataBoundSetter private void setApplication(String application) {
+    this.application = application;
+  }
+
+  public String getQuery() {
+    return this.query;
+  }
+
+  public ArrayList getNodes() {
+    return this.nodes;
+  }
+
+  public String getApplication() {
+    return this.application;
   }
 
   public String getTarget() {
@@ -100,10 +127,28 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
     @StepContextParameter private transient TaskListener listener;
 
     @Override protected Void run() throws Exception {
+      HashMap scope = new HashMap();
       HashMap body = new HashMap();
 
+      // Target is still supported to support older versions of PE.
+      // 2016.4 installs of PE should use the scope parameter when
+      // creating orchestrator jobs.
       if (step.getTarget() != "") {
         body.put("target", step.getTarget());
+      } else {
+        if (step.getQuery() != "") {
+          scope.put("query", step.getQuery());
+        }
+
+        if (!step.getNodes().isEmpty()) {
+          scope.put("nodes", step.getNodes());
+        }
+
+        if (step.getApplication() != "") {
+          scope.put("application", step.getApplication());
+        }
+
+        body.put("scope", scope);
       }
 
       if (step.getConcurrency() != null) {

@@ -34,7 +34,10 @@ class Puppet implements Serializable {
 
   public <V> V job(Map parameters = [:], String env) {
     String credentials
+    String application
+    String query
     String target = null
+    ArrayList nodes = []
     Boolean noop = false
     Integer concurrency = null
 
@@ -43,6 +46,21 @@ class Puppet implements Serializable {
         credentials = parameters.credentials
       } else {
         credentials = credentialsId
+      }
+
+      if (parameters.application) {
+        assert parameters.application instanceof String
+        application = parameters.application
+      }
+
+      if (parameters.query) {
+        assert parameters.query instanceof String
+        query = parameters.query
+      }
+
+      if (parameters.nodes) {
+        assert parameters.nodes instanceof java.util.ArrayList
+        nodes = parameters.nodes
       }
 
       if (parameters.target) {
@@ -60,12 +78,12 @@ class Puppet implements Serializable {
         concurrency = parameters.concurrency
       }
 
-      if(credentials == null) {
+      if (credentials == null) {
         script.error(message: "No Credentials provided for puppet.run. Specify 'credentials' parameter or use puppet.credentials()")
       }
 
       try {
-        script.puppetJob(environment: env, target: target, concurrency: concurrency, credentialsId: credentials)
+        script.puppetJob(environment: env, target: target, concurrency: concurrency, credentialsId: credentials, nodes: nodes, query: query, application: application)
       } catch(err) {
         script.error(message: err.message)
       }
