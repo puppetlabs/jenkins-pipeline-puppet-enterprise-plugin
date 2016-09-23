@@ -148,6 +148,12 @@
       that matches its certname, then look for the key in the scope that matches the node's virtualization
       platform, and finally look in a scope that matches the node's environment.</p>
 
+      <p>If Jenkins is secured to have read access to only authenticated users,
+      use HTTP authentication by setting the 'use_auth', 'auth_user', and
+      'auth_pass' parameters</p>
+
+      <p>For more information on the hiera-http backend, go <a href="https://github.com/crayfishx/hiera-http">here</a></p>
+
       <div class="codeblock">
       <pre class="prettyprint"> <![CDATA[
 :backends:
@@ -158,6 +164,9 @@
   :host: ${request.getServerName()}
   :port: ${request.getLocalPort()}
   :output: json
+  :use_auth: true
+  :auth_user: &ltuser&gt
+  :auth_pass: &ltpassword&gt
   :cache_timeout: 10
   :failure: graceful
   :scopes:

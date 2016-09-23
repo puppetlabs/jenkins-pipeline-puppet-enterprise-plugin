@@ -27,7 +27,7 @@ This plugin also provides an experimental feature that provides a Hiera
 key/value store for Hiera. Key/value pairs are set using the provided
 `puppet.hiera` method.  Pairs are assigned to specific Puppet environments.  The
 [hiera-http](https://github.com/crayfishx/hiera-http)  backend performs a key lookup for the requesting node's
-Puppet environment. An example configuration:
+Puppet environment. An example hiera.yaml configuration:
 
 ```
 :backends:
@@ -37,6 +37,9 @@ Puppet environment. An example configuration:
   :host: jenkins.example.com
   :port: 8080
   :output: json
+  :use_auth: true
+  :auth_user: <user>
+  :auth_pass: <pass>
   :cache_timeout: 10
   :failure: graceful
   :paths:
@@ -44,8 +47,15 @@ Puppet environment. An example configuration:
     - /hiera/lookup?path=%{environment}&key=%{key}
 ```
 
+#### Hiera HTTP authentication
 
-To set values from the Jenkins Pipeline script:
+If Jenkins' Global Security is configured to allow unauthenticated read-only
+access, the 'use_auth', 'auth_pass', and 'auth_user' parameters are
+unnecessary.  Otherwise, create a local Jenkins user that has permissions to
+view the Hiera Data Lookup page and use that user's credentials for the
+hiera.yaml configuration.
+
+To set Hiera values from the Jenkins Pipeline script:
 
 ```
 node {
