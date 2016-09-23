@@ -143,14 +143,18 @@
       a matching key. If the key is not found in the first scope, it will query the next until it has
       exhausted the list of scopes to query.</p>
 
-      <p>Here is an example hiera-http configuration that should be placed in the hiera.conf on the Puppet server. In this example, whenever a
-      node makes a request for a key during catalog compilation, it will first look for the key in a scope
-      that matches its certname, then look for the key in the scope that matches the node's virtualization
-      platform, and finally look in a scope that matches the node's environment.</p>
+      <p>Here is an example hiera-http configuration that should be placed in
+      the hiera.yaml on the Puppet server. In this example, whenever a node
+      makes a request for a key during catalog compilation, it will first
+      look for the key in a scope that matches its certname, then look for
+      the key in the scope that matches the node's virtualization
+      platform, and finally look in a scope that matches the node's
+      environment.</p>
 
       <p>If Jenkins is secured to have read access to only authenticated users,
       use HTTP authentication by setting the 'use_auth', 'auth_user', and
-      'auth_pass' parameters</p>
+      'auth_pass' parameters. If unauthenticated requests have read-only
+      access, the auth parameters are unnecessary.</p>
 
       <p>For more information on the hiera-http backend, go <a href="https://github.com/crayfishx/hiera-http">here</a></p>
 
@@ -176,15 +180,6 @@
       ]]>
       </pre>
       </div>
-      <script>
-      function cfp_confirmDelete(name) {
-        if (confirm("Sure you want to delete ["+name+"]?")) {
-          return true;
-        }else{
-          return false;
-        }
-      }
-      </script>
     </l:main-panel>
   </l:layout>
 </j:jelly>
