@@ -77,9 +77,17 @@ public final class CodeDeployStep extends PuppetEnterpriseStep implements Serial
       PEResponse result = step.request("/code-manager/v1/deploys", 8170, "POST", body);
 
       if (!step.isSuccessful(result)) {
-        ArrayList envResults = (ArrayList) result.getResponseBody();
-        HashMap firstHash = (HashMap) envResults.get(0);
-        HashMap error = (HashMap) firstHash.get("error");
+        HashMap error = null;
+
+        // If we get a hash back, it usually means a problem with authentication.
+        // Otherwise, it's an error from deploying the enviornment code.
+        if (result.getResponseBody() instanceof HashMap ) {
+          error = (HashMap) result.getResponseBody();
+        } else {
+          ArrayList envResults = (ArrayList) result.getResponseBody();
+          HashMap firstHash = (HashMap) envResults.get(0);
+          error = (HashMap) firstHash.get("error");
+        }
 
         logger.log(Level.SEVERE, error.toString());
         throw new PEException(error.toString(), result.getResponseCode(), listener);
