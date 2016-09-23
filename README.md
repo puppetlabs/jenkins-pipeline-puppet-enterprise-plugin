@@ -97,6 +97,19 @@ being used from the Jenkins Pipeline scripts.
 
 ## Pipeline Steps
 
+### puppet.credentials
+
+The `puppet.credentials` method sets the Puppet Enterprise RBAC token to be
+used for all other Puppet pipeline step methods.
+
+**groovy script invocation**: puppet.credentials('jenkins-credential')
+
+**Example**
+
+```
+  puppet.credentials 'pe-access-token'
+```
+
 ### puppet.codeDeploy
 
 The `puppet.codeDeploy` method tells Puppet Enterprise to deploy new Puppet code,
