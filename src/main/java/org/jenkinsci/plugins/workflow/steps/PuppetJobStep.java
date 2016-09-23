@@ -133,7 +133,7 @@ public final class PuppetJobStep extends PuppetEnterpriseStep implements Seriali
       // Target is still supported to support older versions of PE.
       // 2016.4 installs of PE should use the scope parameter when
       // creating orchestrator jobs.
-      if (step.getTarget() != "") {
+      if (step.getTarget() != "" && step.getTarget() != null) {
         body.put("target", step.getTarget());
       } else {
         if (step.getQuery() != "") {
