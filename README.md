@@ -102,7 +102,7 @@ being used from the Jenkins Pipeline scripts.
 The `puppet.credentials` method sets the Puppet Enterprise RBAC token to be
 used for all other Puppet pipeline step methods.
 
-**groovy script invocation**: puppet.credentials('jenkins-credential')
+**groovy script invocation**: puppet.credentials 'jenkins-credential'
 
 **Example**
 
@@ -116,30 +116,41 @@ The `puppet.codeDeploy` method tells Puppet Enterprise to deploy new Puppet code
 Hiera data, and modules to a specified Puppet environment. To lean more about
 code management in Puppet Enterprise, go here: [https://docs.puppet.com/pe/latest/code_mgr.html]
 
-**groovy script invocation**: puppet.codeDeploy()
+**groovy script invocation**: puppet.codeDeploy 'environment'
 
 **Parameters**
 
-* environment - The environment to deploy. String. Required
 * credentials - The Jenkins credentials storing the PE RBAC token. String. Required if puppet.credentials not used.
 
 **Example**
 
 ```
   puppet.codeDeploy 'production', credentials: 'pe-access-token'
+  puppet.codeDeploy 'staging'
 ```
 
 ### puppet.job
 
-**groovy script invocation**: puppet.job()
+**groovy script invocation**: puppet.job('environment')
 
 **Parameters**
 
-* environment - The environment to run the job in. String
-* target - Target in environment to deploy to. Can be app, app instance, or app component. Defaults to entire environment. String
 * credentialsId - ID of the Jenkins Secret text credentials. String. Required if puppet.credentials not used
 * concurrency - Level of maximum concurrency when issuing Puppet runs. Defaults to unlimited. Integer.
 * noop - Whether to run Puppet in noop mode. Defaults to false. Boolean
+
+**Puppet Enterprise 2015.2 - 2016.3 Parameters**
+The following parameters should be used with Puppet Enterprise 2015.2 - 2016.3 for definining the job's run target.
+Note, the target parameter will work with Puppet Enterprise 2016.4+ but has been deprecated.
+
+* target - Target in environment to deploy to. Can be app, app instance, or app component. Defaults to entire environment. String
+
+**Puppet Enterprise 2016.4+ Parameters**
+The following parameters should be used with Puppet Enterprise 2016.4+ for definining the job's run scope.
+
+* nodes - An array of nodes to run Puppet on.
+* application - The name of the application to deploy to. Can be all instances or a specific instance. e.g 'MyApp' or 'MyApp[instance-1]'. String.
+* query - The PQL query to determine the list of nodes to run Puppet on. String.
 
 **Example**
 
@@ -147,11 +158,15 @@ code management in Puppet Enterprise, go here: [https://docs.puppet.com/pe/lates
   puppet.job 'staging'
   puppet.job 'production', concurrency: 10, noop: true
   puppet.job 'production', concurrency: 10, noop: true, credentialsId: 'pe-access-token'
+  puppet.job 'production', nodes: ['node1.example.com','node2.example.com']
+  puppet.job 'production', application: Rgbank
+  puppet.job 'production', application: Rgbank[phase-1]
+  puppet.job 'production', query: 'nodes { certname ~ "substring" and environment = "production" }'
 ```
 
 ### puppet.hiera
 
-**groovy script invocation**: puppet.hiera()
+**groovy script invocation**: puppet.hiera
 
 **Parameters**
 
