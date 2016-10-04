@@ -83,7 +83,7 @@ class Puppet implements Serializable {
       }
 
       try {
-        script.puppetJob(environment: env, target: target, concurrency: concurrency, credentialsId: credentials, nodes: nodes, query: query, application: application)
+        script.puppetJob(environment: env, target: target, concurrency: concurrency, credentialsId: credentials, nodes: nodes, query: query, application: application, noop: noop)
       } catch(err) {
         script.error(message: err.message)
       }
