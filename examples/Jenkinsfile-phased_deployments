@@ -1,0 +1,21 @@
+node {
+  git 'https://github.com/account/app'
+
+  //Set the Puppet RBAC token to use
+  //  for all the puppet methods.
+  puppet.credentials 'pe-access-token'
+
+  //Perform the build
+  stage 'Build and package'
+
+  //
+  // pipeline stuff here
+  //
+
+  //Deploy to 10 at a time
+  stage 'Deploy to production'
+  puppet.job 'production', query: 'inventory[certname] { trusted.extentions.pp_application = "App" } order by certname limit 10'
+  puppet.job 'production', query: 'inventory[certname] { trusted.extentions.pp_application = "App" } order by certname limit 10 offset 10'
+  puppet.job 'production', query: 'inventory[certname] { trusted.extentions.pp_application = "App" } order by certname limit 10 offset 20'
+  puppet.job 'production', query: 'inventory[certname] { trusted.extentions.pp_application = "App" } order by certname limit 10 offset 30'
+}

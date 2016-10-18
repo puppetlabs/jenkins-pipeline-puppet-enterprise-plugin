@@ -1,0 +1,42 @@
+node {
+  git 'https://github.com/account/app'
+
+  //Perform the build
+  stage 'Build and package'
+  def version = env.BUILD_ID
+  sh 'tar -czf build-$BUILD_ID.tar.gz -C src .'
+  archive "build-${version}.tar.gz"
+
+  //Copy the build to a location reachable by Puppet agents
+  step([$class: 'CopyArtifact', filter: "build-${version}.tar.gz", fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: [$class: 'SpecificBuildSelector', buildNumber: env.BUILD_ID], target: '/var/www/html/builds/app'])
+  step([$class: 'CopyArtifact', filter: "app.sql", fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: [$class: 'SpecificBuildSelector', buildNumber: env.BUILD_ID], target: '/var/www/html/builds/app'])
+
+  def hostaddress = InetAddress.localHost.hostAddress
+
+  //Use another Jenkins job to test the build.
+  //Set some Hiera values that Puppet can use 
+  //  while deploying the build to the test systems.
+  //Here, we will set the build version and and
+  //  the URL to get the build for the 'beaker' scope
+  stage 'Deployment Test'
+  puppet.hiera scope: 'beaker', key: 'build-version', value: version
+  puppet.hiera scope: 'beaker', key: 'build-path', value: "http://" + hostaddress + "/builds/app/build-${version}.tar.gz"
+  build job: 'app-spec', parameters: [string(name: 'COMMIT', value: env.version)]
+
+  //Set the Puppet RBAC token to use
+  //  for all the puppet methods.
+  puppet.credentials 'pe-access-token'
+
+  //Deploy to staging by promoting the build version
+  //  and location to the staging hierarchy in Hiera.
+  stage 'Deploy to staging'
+  input "Ready to deploy to staging?"
+  puppet.hiera scope: 'staging', key: 'build-version', value: version
+  puppet.hiera scope: 'staging', key: 'build-path', value: "http://" + hostaddress + "/builds/app/build-${version}.tar.gz"
+  puppet.codeDeploy 'staging'
+  puppet.job 'staging', target: 'App'
+
+  stage 'Deploy to production'
+  input "Ready to deploy to production?"
+  puppet.job 'production', concurrency: 40, target: 'App'
+}
