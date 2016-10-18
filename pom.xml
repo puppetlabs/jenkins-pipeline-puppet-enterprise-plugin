@@ -8,7 +8,7 @@
         <relativePath />
     </parent>
     <groupId>org.jenkins-ci.plugins.workflow</groupId>
-    <artifactId>workflow-puppet-enterprise</artifactId>
+    <artifactId>puppet-enterprise-pipeline</artifactId>
     <version>1.0.0</version>
     <packaging>hpi</packaging>
     <name>Pipeline: Puppet Enterprise</name>
@@ -20,9 +20,9 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:git:git://github.com/puppetlabs/jenkins-workflow-puppet-enterprise-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:puppetlabs/jenkins-workflow-puppet-enterprise-plugin.git</developerConnection>
-        <url>https://github.com/puppetlabs/jenkins-workflow-puppet-enterprise-plugin</url>
+      <connection>scm:git:git://github.com/jenkinsci/${artifactId}.git</connection>
+      <developerConnection>scm:git:git://github.com/jenkinsci/${artifactId}.git</developerConnection>
+      <url>https://github.com/jenkinsci/${artifactId}</url>
       <tag>HEAD</tag>
     </scm>
     <repositories>
